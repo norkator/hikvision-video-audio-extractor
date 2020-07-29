@@ -6,13 +6,13 @@ namespace VideoAudioExtractor
     static class Program
     {
         private static readonly string configFile =
-            "C:\\Users\\Martin\\Documents\\RiderProjects\\hikvision-video-audio-extractor\\VideoAudioExtractor\\config.xml";
+            "C:\\Users\\Martin\\Documents\\RiderProjects\\hikvision-video-audio-extractor\\config.xml";
 
         private static readonly ConfigReader ConfigReader = new ConfigReader(configFile);
 
         static void Main(string[] args)
         {
-            Console.WriteLine(ConfigReader.GetTest);
+            // ConfigReader.GetPort
         }
     }
 }
