@@ -1,3 +1,6 @@
+# Config
+config.xml
+
 # IDE
 .idea
 
@@ -33,3 +36,4 @@
 *.exe
 *.out
 *.app
+
