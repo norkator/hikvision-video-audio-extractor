@@ -9,12 +9,19 @@ namespace VideoAudioExtractor
             "C:\\Users\\Martin\\Documents\\RiderProjects\\hikvision-video-audio-extractor\\config.xml";
 
         private static readonly ConfigReader ConfigReader = new ConfigReader(configFile);
+        private static NVRConnector _nvrConnector = null;
 
         static void Main(string[] args)
         {
+            _nvrConnector = new NVRConnector(
+                ConfigReader.GetIpAddress,
+                ConfigReader.GetPort,
+                ConfigReader.GetUserName,
+                ConfigReader.GetPassword
+            );
+
             Worker worker = new Worker(ConfigReader.GetProcessSleepSeconds);
-            Thread t = new Thread(worker.DoWork);
-            t.IsBackground = true;
+            Thread t = new Thread(worker.DoWork) {IsBackground = true};
             t.Start();
             while (true)
             {
@@ -34,11 +41,11 @@ namespace VideoAudioExtractor
     class Worker
     {
         public bool KeepGoing { get; set; }
-        private int _processSleepSeconds;
+        private readonly int _processSleepSeconds;
 
         public Worker(int processSleepSeconds)
         {
-            this._processSleepSeconds = processSleepSeconds;
+            _processSleepSeconds = processSleepSeconds;
             KeepGoing = true;
         }
 
@@ -47,7 +54,7 @@ namespace VideoAudioExtractor
             while (KeepGoing)
             {
                 Console.WriteLine("Running...");
-                Thread.Sleep(this._processSleepSeconds * 1000);
+                Thread.Sleep(_processSleepSeconds * 1000);
             }
         }
     }
