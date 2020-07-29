@@ -38,6 +38,8 @@ config.xml
 *.app
 
 # Other
-VideoAudioExtractor/obj/Debug/netcoreapp3.1/VideoAudioExtractor.csproj.CoreCompileInputs.cache
-VideoAudioExtractor/bin/Debug/netcoreapp3.1/VideoAudioExtractor.pdb
 *.pdb
+VideoAudioExtractor/obj/Debug/netcoreapp3.1/VideoAudioExtractor.csproj.CoreCompileInputs.cache
+VideoAudioExtractor/bin/Debug/netcoreapp3.1/VideoAudioExtractor.deps.json
+VideoAudioExtractor/bin/Debug/netcoreapp3.1/VideoAudioExtractor.runtimeconfig.dev.json
+VideoAudioExtractor/bin/Debug/netcoreapp3.1/VideoAudioExtractor.runtimeconfig.json
