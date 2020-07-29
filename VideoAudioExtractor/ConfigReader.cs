@@ -8,14 +8,16 @@ namespace VideoAudioExtractor
         private string test = "test";
         private XmlDocument _config = new XmlDocument();
 
-        public ConfigReader()
+        public ConfigReader(string configFile)
         {
+            Console.WriteLine("Current working dir: " + configFile);
+            LoadConfig(configFile);
         }
 
 
-        private void LoadConfig()
+        private void LoadConfig(string cwd)
         {
-            // _config.Load();
+            _config.Load(cwd);
         }
 
         public string GetTest => test;
