@@ -4,43 +4,33 @@ namespace VideoAudioExtractor
 {
     public class NVRConnector
     {
-        // Variables
+        // Connection variables
         private string _ipAddress = string.Empty;
-        private int _port = 8000;
+        private Int16 _port = 8000;
         private string _username = string.Empty;
         private string _password = string.Empty;
+
+        // Camera variables
+        private Int32 m_lUserID = -1;
 
         // Constructor
         public NVRConnector(string ipAddress, int port, string username, string password)
         {
             _ipAddress = ipAddress;
-            _port = port;
+            _port = (Int16) port;
             _username = username;
             _password = password;
+
+            LoginNVR();
         }
 
 
-        /*
-        private void LoginNVR(object sender, EventArgs e)
+        private void LoginNVR()
         {
-            if (textBoxIP.Text == "" || textBoxPort.Text == "" ||
-                textBoxUserName.Text == "" || textBoxPassword.Text == "")
-            {
-                MessageBox.Show("Please input IP, Port, User name and Password!");
-                return;
-            }
-
             if (m_lUserID < 0)
             {
-                string DVRIPAddress = textBoxIP.Text; //IP or domain of device
-                Int16 DVRPortNumber = Int16.Parse(textBoxPort.Text); //Service port of device
-                string DVRUserName = textBoxUserName.Text; //Login name of deivce
-                string DVRPassword = textBoxPassword.Text; //Login password of device
-
-                //    DeviceInfo = new CHCNetSDK.NET_DVR_DEVICEINFO_V30();
-
                 //Login the device
-                m_lUserID = CHCNetSDK.NET_DVR_Login_V30(DVRIPAddress, DVRPortNumber, DVRUserName, DVRPassword,
+                m_lUserID = CHCNetSDK.NET_DVR_Login_V30(_ipAddress, _port, _username, _password,
                     ref DeviceInfo);
                 if (m_lUserID < 0)
                 {
@@ -98,6 +88,5 @@ namespace VideoAudioExtractor
 
             return;
         }
-        */
     }
 }
