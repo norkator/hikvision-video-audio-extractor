@@ -1,4 +1,5 @@
 ﻿using System;
+using NVRCsharpDemo;
 
 namespace VideoAudioExtractor
 {
@@ -11,7 +12,14 @@ namespace VideoAudioExtractor
         private string _password = string.Empty;
 
         // Camera variables
+        private uint iLastErr = 0;
         private Int32 m_lUserID = -1;
+        private CHCNetSDK.NET_DVR_DEVICEINFO_V30 DeviceInfo;
+        private string _errorMsg = string.Empty;
+        private uint dwAChanTotalNum = 0;
+        private uint dwDChanTotalNum = 0;
+        private Int32 m_lPlayHandle = -1;
+        private Int32 m_lDownHandle = -1;
 
         // Constructor
         public NVRConnector(string ipAddress, int port, string username, string password)
@@ -21,11 +29,11 @@ namespace VideoAudioExtractor
             _username = username;
             _password = password;
 
-            LoginNVR();
+            LoginNvr();
         }
 
 
-        private void LoginNVR()
+        private void LoginNvr()
         {
             if (m_lUserID < 0)
             {
@@ -35,19 +43,22 @@ namespace VideoAudioExtractor
                 if (m_lUserID < 0)
                 {
                     iLastErr = CHCNetSDK.NET_DVR_GetLastError();
-                    str1 = "NET_DVR_Login_V30 failed, error code= " + iLastErr; //Login failed,print error code
-                    MessageBox.Show(str1);
+                    _errorMsg =
+                        "NET_DVR_Login_V30 failed, error code= " + iLastErr; // Login failed, print error code
+                    Console.WriteLine(_errorMsg);
                     return;
                 }
                 else
                 {
-                    //Login successsfully
-                    MessageBox.Show("Login Success!");
-                    btnLogin.Text = "Logout";
+                    Console.WriteLine("Login Success!");
+                    // btnLogin.Text = "Logout";
 
                     dwAChanTotalNum = (uint) DeviceInfo.byChanNum;
                     dwDChanTotalNum = (uint) DeviceInfo.byIPChanNum + 256 * (uint) DeviceInfo.byHighDChanNum;
 
+                    Console.WriteLine("Count of ip channels: " + dwDChanTotalNum);
+
+                    /*
                     if (dwDChanTotalNum > 0)
                     {
                         InfoIPChannel();
@@ -60,15 +71,16 @@ namespace VideoAudioExtractor
                             iChannelNum[i] = i + (int) DeviceInfo.byStartChan;
                         }
 
-                        // MessageBox.Show("This device has no IP channel!");
+                        Console.WriteLine("This device has no IP channel!");
                     }
+                    */
                 }
             }
             else
             {
                 if (m_lPlayHandle >= 0)
                 {
-                    MessageBox.Show("Please stop playback firstly"); //Please stop playback before logout
+                    Console.WriteLine("Please stop playback firstly"); // Please stop playback before logout
                     return;
                 }
 
@@ -76,14 +88,13 @@ namespace VideoAudioExtractor
                 if (!CHCNetSDK.NET_DVR_Logout(m_lUserID))
                 {
                     iLastErr = CHCNetSDK.NET_DVR_GetLastError();
-                    str1 = "NET_DVR_Logout failed, error code= " + iLastErr;
-                    MessageBox.Show(str1);
+                    _errorMsg = "NET_DVR_Logout failed, error code= " + iLastErr;
+                    Console.WriteLine(_errorMsg);
                     return;
                 }
 
-                listViewIPChannel.Items.Clear(); //Clear channel list
                 m_lUserID = -1;
-                btnLogin.Text = "Login";
+                // btnLogin.Text = "Login";
             }
 
             return;

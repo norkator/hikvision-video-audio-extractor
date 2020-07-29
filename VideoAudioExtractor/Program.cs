@@ -13,6 +13,8 @@ namespace VideoAudioExtractor
 
         static void Main(string[] args)
         {
+            
+            // This will initiate login to nvr
             _nvrConnector = new NVRConnector(
                 ConfigReader.GetIpAddress,
                 ConfigReader.GetPort,
