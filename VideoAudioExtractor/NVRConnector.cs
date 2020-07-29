@@ -125,8 +125,8 @@ namespace VideoAudioExtractor
 
         private void ListAnalogChannel(Int32 iChanNo, byte byEnable)
         {
-            var str1 = String.Format("Camera {0}", iChanNo);
-            var str2 = string.Empty;
+            var str1 = $"Camera {iChanNo}";
+            string str2;
             m_lTree++;
             if (byEnable == 0)
             {
