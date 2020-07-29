@@ -40,3 +40,4 @@ config.xml
 # Other
 VideoAudioExtractor/obj/Debug/netcoreapp3.1/VideoAudioExtractor.csproj.CoreCompileInputs.cache
 VideoAudioExtractor/bin/Debug/netcoreapp3.1/VideoAudioExtractor.pdb
+*.pdb

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
+using System.Net.NetworkInformation;
 
 namespace VideoAudioExtractor
 {
@@ -13,7 +15,6 @@ namespace VideoAudioExtractor
 
         static void Main(string[] args)
         {
-            
             // This will initiate login to nvr
             _nvrConnector = new NVRConnector(
                 ConfigReader.GetIpAddress,
@@ -22,6 +23,11 @@ namespace VideoAudioExtractor
                 ConfigReader.GetPassword
             );
 
+            Thread.Sleep(10 * 1000);
+            
+            _nvrConnector.LogOutNvr();
+            
+            
             Worker worker = new Worker(ConfigReader.GetProcessSleepSeconds);
             Thread t = new Thread(worker.DoWork) {IsBackground = true};
             t.Start();
@@ -37,6 +43,7 @@ namespace VideoAudioExtractor
 
             t.Join();
         }
+        
     }
 
 
@@ -59,5 +66,6 @@ namespace VideoAudioExtractor
                 Thread.Sleep(_processSleepSeconds * 1000);
             }
         }
+        
     }
 }
