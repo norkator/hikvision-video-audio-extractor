@@ -43,3 +43,5 @@ VideoAudioExtractor/obj/Debug/netcoreapp3.1/VideoAudioExtractor.csproj.CoreCompi
 VideoAudioExtractor/bin/Debug/netcoreapp3.1/VideoAudioExtractor.deps.json
 VideoAudioExtractor/bin/Debug/netcoreapp3.1/VideoAudioExtractor.runtimeconfig.dev.json
 VideoAudioExtractor/bin/Debug/netcoreapp3.1/VideoAudioExtractor.runtimeconfig.json
+VideoAudioExtractor/bin/Debug/bin/LocalXml.zip
+VideoAudioExtractor/bin/Debug/bin/log4cxx.properties
