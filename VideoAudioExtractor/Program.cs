@@ -2,11 +2,13 @@
 
 namespace VideoAudioExtractor
 {
-    class Program
+    static class Program
     {
+        private static readonly ConfigReader ConfigReader = new ConfigReader();
+
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine(ConfigReader.GetTest);
         }
     }
 }
