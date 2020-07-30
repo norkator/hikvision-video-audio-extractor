@@ -21,9 +21,6 @@ namespace VideoAudioExtractor
         // Video output
         private string _outputLocationPath;
 
-        // Variables
-        private List<Recording> _recordings = null;
-
         // Camera variables
         private Int32 _i = 0;
         private uint _iLastErr = 0;
@@ -64,7 +61,8 @@ namespace VideoAudioExtractor
                 _iChannelNum = new int[96];
             }
 
-            OpenDatabaseConnection();
+            
+            Task.Run(this.OpenDatabaseConnection).Wait();
         }
 
 
@@ -72,29 +70,57 @@ namespace VideoAudioExtractor
          * Open database connection,
          * if fails, will try again after 60 seconds
          */
-        private void OpenDatabaseConnection()
+        private async Task OpenDatabaseConnection()
         {
-            Task<bool> dbConnected = Task.Run(async () => await _database.OpenDatabaseConnection());
-            if (dbConnected.Result)
+            bool dbConnected = await _database.OpenDatabaseConnection();
+            if (dbConnected)
             {
-                GetLastRecordingEndTime();
-            }
-            else
-            {
-                Thread.Sleep(60 * 1000); // Sleep for a minute
-                OpenDatabaseConnection(); // Then try re open connection
+                await StartProcess();
             }
         }
 
 
-        private void GetLastRecordingEndTime()
+        private async Task StartProcess()
+        {
+            // Get latest recording end time we have
+            var lastRecordingEndTime = GetLastRecordingEndTime();
+            if (LoginLogoutNvr(lastRecordingEndTime))
+            {
+                // Find recordings from camera
+                Task<List<Recording>> searchRecordingsTask = SearchRecordings(lastRecordingEndTime);
+                await searchRecordingsTask;
+                List<Recording> recordings = searchRecordingsTask.Result;
+
+                if (recordings.Count > 0)
+                {
+                    
+                    // Download recordings which we don't have
+                    Task<List<Recording>> downloadedRecordingsTask = DownloadRecordings(recordings);
+                    await downloadedRecordingsTask;
+                    List<Recording> downloadedRecordings = downloadedRecordingsTask.Result;
+                    
+                    
+                        
+                    LogOutNvr();
+                }
+                else
+                {
+                    Console.WriteLine("No recordings to download...");
+                    LogOutNvr();
+                }
+            }
+        }
+        
+
+
+        private DateTime GetLastRecordingEndTime()
         {
             Task<DateTime> result = Task.Run(async () => await _database.GetLastRecordingEndTime());
-            LoginLogoutNvr(result.Result);
+            return result.Result;
         }
 
 
-        private void LoginLogoutNvr(DateTime lastRecordingEndTime)
+        private Boolean LoginLogoutNvr(DateTime lastRecordingEndTime)
         {
             if (_mLUserId < 0)
             {
@@ -135,7 +161,7 @@ namespace VideoAudioExtractor
                         Console.WriteLine("This device has no IP channel!");
                     }
 
-                    SearchRecordings(lastRecordingEndTime);
+                    return true;
                 }
             }
             else
@@ -143,7 +169,7 @@ namespace VideoAudioExtractor
                 if (m_lPlayHandle >= 0)
                 {
                     Console.WriteLine("Please stop playback firstly"); // Please stop playback before logout
-                    return;
+                    return false;
                 }
 
                 //Logout the device
@@ -152,13 +178,16 @@ namespace VideoAudioExtractor
                     _iLastErr = CHCNetSDK.NET_DVR_GetLastError();
                     _errorMsg = "NET_DVR_Logout failed, error code= " + _iLastErr;
                     Console.WriteLine(_errorMsg);
-                    return;
+                    return false;
                 }
 
                 _mLUserId = -1;
                 Console.WriteLine("Logged out from NVR");
             }
+
+            return false;
         }
+        
 
         public void LogOutNvr()
         {
@@ -183,9 +212,9 @@ namespace VideoAudioExtractor
         }
 
 
-        private void SearchRecordings(DateTime lastRecordingEndTime)
+        private async Task<List<Recording>> SearchRecordings(DateTime lastRecordingEndTime)
         {
-            _recordings = new List<Recording>();
+            List<Recording> recordings = new List<Recording>();
 
             CHCNetSDK.NET_DVR_FILECOND_V40 struFileCondV40 = new CHCNetSDK.NET_DVR_FILECOND_V40();
 
@@ -265,7 +294,7 @@ namespace VideoAudioExtractor
 
                         if (DateTime.Compare(recordingDate, lastRecordingEndTime) == 1)
                         {
-                            _recordings.Add(
+                            recordings.Add(
                                 new Recording(0, str1, str2, str3)
                             );
                             Console.WriteLine("Found non existing: " + str1 + " - " + str2);
@@ -281,29 +310,38 @@ namespace VideoAudioExtractor
                     }
                 }
 
-                // Task task = Task.Run(async () => await DownloadRecordings(_recordings));
-                DownloadRecordings(_recordings);
+                return recordings;
             }
+
+            return null;
         }
 
 
-        private void DownloadRecordings(List<Recording> recordings)
+        private async Task<List<Recording>> DownloadRecordings(List<Recording> recordings)
         {
             Console.WriteLine(recordings.Count + " recordings to download");
+            List<Recording> downloadedRecordings = new List<Recording>();
             foreach (var recording in recordings)
             {
-                DownloadRecording(recording);
+                if (await DownloadRecording(recording))
+                {
+                    downloadedRecordings.Add(recording);
+                }
             }
+            
+            return downloadedRecordings;
         }
 
 
-        private void DownloadRecording(Recording recording)
+        private async Task<Boolean> DownloadRecording(Recording recording)
         {
-            Console.WriteLine("running");
+
+            return true;
+            
             if (_mLDownHandle >= 0)
             {
                 Console.WriteLine("Error, already downloading!");
-                return;
+                return false;
             }
 
             var sVideoFileName = _outputLocationPath + recording.GetFileName() + ".mp4";
@@ -316,7 +354,7 @@ namespace VideoAudioExtractor
                 _iLastErr = CHCNetSDK.NET_DVR_GetLastError();
                 _errorMsg = "NET_DVR_GetFileByName failed, error code= " + _iLastErr;
                 Console.WriteLine(_errorMsg);
-                return;
+                return false;
             }
 
             uint iOutValue = 0;
@@ -328,11 +366,11 @@ namespace VideoAudioExtractor
                 _errorMsg = "NET_DVR_PLAY_START failed, error code= " +
                             _iLastErr; // Download controlling failed, print error code
                 Console.WriteLine(_errorMsg);
-                return;
+                return false;
             }
 
             var downloadProgress = 0;
-            
+
             while (downloadProgress < 100)
             {
                 // Get downloading process
@@ -342,7 +380,17 @@ namespace VideoAudioExtractor
             }
 
             _mLDownHandle = -1;
-            return;
+            return true;
+        }
+
+
+        private async Task UpdateDatabase(List<Recording> recordings)
+        {
+            foreach (var recording in recordings)
+            {
+                bool result = await _database.InsertRecording(recording);
+                Console.WriteLine(result);
+            }
         }
     }
 }
