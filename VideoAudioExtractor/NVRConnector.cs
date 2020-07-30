@@ -61,8 +61,8 @@ namespace VideoAudioExtractor
                 _iChannelNum = new int[96];
             }
 
-            
-            Task.Run(this.OpenDatabaseConnection).Wait();
+
+            Task.Run(this.OpenDatabaseConnection).Wait(); // Todo, remove from here, move to program main process
         }
 
 
@@ -93,15 +93,18 @@ namespace VideoAudioExtractor
 
                 if (recordings.Count > 0)
                 {
-                    
                     // Download recordings which we don't have
                     Task<List<Recording>> downloadedRecordingsTask = DownloadRecordings(recordings);
                     await downloadedRecordingsTask;
                     List<Recording> downloadedRecordings = downloadedRecordingsTask.Result;
                     
-                    
-                        
+                    // Log out from nvr at this point
                     LogOutNvr();
+
+                    // Update database, set as downloaded
+                    Task<bool> updateDatabaseTask = UpdateDatabase(downloadedRecordings);
+                    await updateDatabaseTask;
+                    
                 }
                 else
                 {
@@ -110,7 +113,6 @@ namespace VideoAudioExtractor
                 }
             }
         }
-        
 
 
         private DateTime GetLastRecordingEndTime()
@@ -187,7 +189,7 @@ namespace VideoAudioExtractor
 
             return false;
         }
-        
+
 
         public void LogOutNvr()
         {
@@ -286,17 +288,17 @@ namespace VideoAudioExtractor
                         var str3 = eDYear + "-" + eDMonth + "-" + eDDAy + " " +
                                    eDHour + ":" + eDMinute + ":" + eDSecond;
 
-                        DateTime recordingDate = DateTime.ParseExact(
+                        DateTime recordingEndDate = DateTime.ParseExact(
                             str3,
                             "yyyy-M-d H:m:s", // Todo: verify later with different cases!
                             CultureInfo.InvariantCulture
                         );
 
-                        if (DateTime.Compare(recordingDate, lastRecordingEndTime) == 1)
+                        if (DateTime.Compare(recordingEndDate, lastRecordingEndTime) == 1)
                         {
-                            recordings.Add(
-                                new Recording(0, str1, str2, str3)
-                            );
+                            Recording recording = new Recording(0, str1, str2, str3);
+                            recording.SetDtEndTime(recordingEndDate);
+                            recordings.Add(recording);
                             Console.WriteLine("Found non existing: " + str1 + " - " + str2);
                         }
                     }
@@ -328,16 +330,13 @@ namespace VideoAudioExtractor
                     downloadedRecordings.Add(recording);
                 }
             }
-            
+
             return downloadedRecordings;
         }
 
 
         private async Task<Boolean> DownloadRecording(Recording recording)
         {
-
-            return true;
-            
             if (_mLDownHandle >= 0)
             {
                 Console.WriteLine("Error, already downloading!");
@@ -384,13 +383,14 @@ namespace VideoAudioExtractor
         }
 
 
-        private async Task UpdateDatabase(List<Recording> recordings)
+        private async Task<bool> UpdateDatabase(List<Recording> downloadedRecordings)
         {
-            foreach (var recording in recordings)
+            foreach (var recording in downloadedRecordings)
             {
-                bool result = await _database.InsertRecording(recording);
-                Console.WriteLine(result);
+                await _database.InsertRecording(recording);
             }
+
+            return true;
         }
     }
 }

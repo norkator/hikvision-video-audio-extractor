@@ -28,17 +28,17 @@ namespace VideoAudioExtractor
         }
 
 
-        public async Task<bool> InsertRecording(Recording recording)
+        public async Task InsertRecording(Recording recording)
         {
             // Insert some data
             await using var cmd = new NpgsqlCommand( // Todo: populate camera name field later...
                 "INSERT INTO recordings (file_name, start_time, end_time) VALUES (@fn, @st, @et)",
                 _connection);
+
             cmd.Parameters.AddWithValue("fn", recording.GetFileName());
-            cmd.Parameters.AddWithValue("st", recording.GetStartTime());
-            cmd.Parameters.AddWithValue("et", recording.GetEndTime());
+            cmd.Parameters.AddWithValue("st", recording.GetDtStartTime());
+            cmd.Parameters.AddWithValue("et", recording.GetDtEndTime());
             await cmd.ExecuteNonQueryAsync();
-            return cmd.Transaction.IsCompleted;
         }
 
 
@@ -56,6 +56,7 @@ namespace VideoAudioExtractor
                     lastRecording = reader.GetDateTime(0);
                 }
 
+                reader.Close();
                 return lastRecording;
             }
             else
