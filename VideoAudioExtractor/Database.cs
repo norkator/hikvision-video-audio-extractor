@@ -36,9 +36,9 @@ namespace VideoAudioExtractor
         {
         }
 
-        public async Task<String> GetLastRecordingEndTime()
+        public async Task<DateTime> GetLastRecordingEndTime()
         {
-            string lastRecording = null;
+            DateTime lastRecording = new DateTime();
             await using var cmd = new NpgsqlCommand(
                 "SELECT end_time FROM recordings ORDER BY end_time DESC LIMIT 1", _connection);
             var reader = await cmd.ExecuteReaderAsync();
@@ -47,13 +47,14 @@ namespace VideoAudioExtractor
             {
                 while (await reader.ReadAsync())
                 {
-                    lastRecording = reader.GetDateTime(0).ToString(CultureInfo.InvariantCulture);
+                    lastRecording = reader.GetDateTime(0);
                 }
+
                 return lastRecording;
             }
             else
             {
-                return null;
+                return lastRecording;
             }
         }
 

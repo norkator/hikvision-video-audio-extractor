@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using NVRCsharpDemo;
@@ -88,12 +89,12 @@ namespace VideoAudioExtractor
 
         private void GetLastRecordingEndTime()
         {
-            Task<string> result = Task.Run(async () => await _database.GetLastRecordingEndTime());
+            Task<DateTime> result = Task.Run(async () => await _database.GetLastRecordingEndTime());
             LoginLogoutNvr(result.Result);
         }
 
 
-        private void LoginLogoutNvr(string lastRecordingEndTime)
+        private void LoginLogoutNvr(DateTime lastRecordingEndTime)
         {
             if (_mLUserId < 0)
             {
@@ -133,7 +134,7 @@ namespace VideoAudioExtractor
 
                         Console.WriteLine("This device has no IP channel!");
                     }
-                    
+
                     SearchRecordings(lastRecordingEndTime);
                 }
             }
@@ -157,14 +158,13 @@ namespace VideoAudioExtractor
                 _mLUserId = -1;
                 Console.WriteLine("Logged out from NVR");
             }
-            
         }
 
         public void LogOutNvr()
         {
             if (_mLUserId >= 0)
             {
-                LoginLogoutNvr(null);
+                LoginLogoutNvr(new DateTime());
             }
             else
             {
@@ -183,38 +183,38 @@ namespace VideoAudioExtractor
         }
 
 
-        private void SearchRecordings(string lastRecordingEndTime)
+        private void SearchRecordings(DateTime lastRecordingEndTime)
         {
             _recordings = new List<Recording>();
 
-            CHCNetSDK.NET_DVR_FILECOND_V40 struFileCond_V40 = new CHCNetSDK.NET_DVR_FILECOND_V40();
+            CHCNetSDK.NET_DVR_FILECOND_V40 struFileCondV40 = new CHCNetSDK.NET_DVR_FILECOND_V40();
 
             // TODO: nothing yet selects iSelIndex, or is 0 "first one"?
-            struFileCond_V40.lChannel = _iChannelNum[(int) iSelIndex]; //Channel number
-            struFileCond_V40.dwFileType = 0xff; //0xff-All，0-Timing record，1-Motion detection，2-Alarm trigger，...
-            struFileCond_V40.dwIsLocked =
+            struFileCondV40.lChannel = _iChannelNum[(int) iSelIndex]; //Channel number
+            struFileCondV40.dwFileType = 0xff; //0xff-All，0-Timing record，1-Motion detection，2-Alarm trigger，...
+            struFileCondV40.dwIsLocked =
                 0xff; //0-unfixed file，1-fixed file，0xff means all files（including fixed and unfixed files）
 
             DateTime today = DateTime.Now;
 
             //Set the starting time to search video files
-            struFileCond_V40.struStartTime.dwYear = (uint) today.Year;
-            struFileCond_V40.struStartTime.dwMonth = (uint) today.Month;
-            struFileCond_V40.struStartTime.dwDay = (uint) today.Day;
-            struFileCond_V40.struStartTime.dwHour = 0;
-            struFileCond_V40.struStartTime.dwMinute = 0;
-            struFileCond_V40.struStartTime.dwSecond = 0;
+            struFileCondV40.struStartTime.dwYear = (uint) today.Year;
+            struFileCondV40.struStartTime.dwMonth = (uint) today.Month;
+            struFileCondV40.struStartTime.dwDay = (uint) today.Day;
+            struFileCondV40.struStartTime.dwHour = 0;
+            struFileCondV40.struStartTime.dwMinute = 0;
+            struFileCondV40.struStartTime.dwSecond = 0;
 
             //Set the stopping time to search video files
-            struFileCond_V40.struStopTime.dwYear = (uint) today.Year;
-            struFileCond_V40.struStopTime.dwMonth = (uint) today.Month;
-            struFileCond_V40.struStopTime.dwDay = (uint) today.Day;
-            struFileCond_V40.struStopTime.dwHour = 23;
-            struFileCond_V40.struStopTime.dwMinute = 59;
-            struFileCond_V40.struStopTime.dwSecond = 59;
+            struFileCondV40.struStopTime.dwYear = (uint) today.Year;
+            struFileCondV40.struStopTime.dwMonth = (uint) today.Month;
+            struFileCondV40.struStopTime.dwDay = (uint) today.Day;
+            struFileCondV40.struStopTime.dwHour = 23;
+            struFileCondV40.struStopTime.dwMinute = 59;
+            struFileCondV40.struStopTime.dwSecond = 59;
 
             //Start to search video files 
-            _mLFindHandle = CHCNetSDK.NET_DVR_FindFile_V40(_mLUserId, ref struFileCond_V40);
+            _mLFindHandle = CHCNetSDK.NET_DVR_FindFile_V40(_mLUserId, ref struFileCondV40);
 
             if (_mLFindHandle < 0)
             {
@@ -246,19 +246,30 @@ namespace VideoAudioExtractor
                                    Convert.ToString(struFileData.struStartTime.dwMinute) + ":" +
                                    Convert.ToString(struFileData.struStartTime.dwSecond);
 
-                        var str3 = Convert.ToString(struFileData.struStopTime.dwYear) + "-" +
-                                   Convert.ToString(struFileData.struStopTime.dwMonth) + "-" +
-                                   Convert.ToString(struFileData.struStopTime.dwDay) + " " +
-                                   Convert.ToString(struFileData.struStopTime.dwHour) + ":" +
-                                   Convert.ToString(struFileData.struStopTime.dwMinute) + ":" +
-                                   Convert.ToString(struFileData.struStopTime.dwSecond);
-                        
-                        Console.WriteLine(str3);
-                        Console.Write(lastRecordingEndTime);
 
-                        _recordings.Add(
-                            new Recording(0, str1, str2, str3)
+                        var eDYear = Convert.ToString(struFileData.struStopTime.dwYear);
+                        var eDMonth = Convert.ToString(struFileData.struStopTime.dwMonth);
+                        var eDDAy = Convert.ToString(struFileData.struStopTime.dwDay);
+                        var eDHour = Convert.ToString(struFileData.struStopTime.dwHour);
+                        var eDMinute = Convert.ToString(struFileData.struStopTime.dwMinute);
+                        var eDSecond = Convert.ToString(struFileData.struStopTime.dwSecond);
+
+                        var str3 = eDYear + "-" + eDMonth + "-" + eDDAy + " " +
+                                   eDHour + ":" + eDMinute + ":" + eDSecond;
+
+                        DateTime recordingDate = DateTime.ParseExact(
+                            str3,
+                            "yyyy-M-d H:m:s", // Todo: verify later with different cases!
+                            CultureInfo.InvariantCulture
                         );
+
+                        if (DateTime.Compare(recordingDate, lastRecordingEndTime) == 1)
+                        {
+                            _recordings.Add(
+                                new Recording(0, str1, str2, str3)
+                            );
+                            Console.WriteLine("Found non existing: " + str1 + " - " + str2);
+                        }
                     }
                     else if (result == CHCNetSDK.NET_DVR_FILE_NOFIND || result == CHCNetSDK.NET_DVR_NOMOREFILE)
                     {
@@ -277,7 +288,13 @@ namespace VideoAudioExtractor
 
         private void ValidateRecordings(List<Recording> recordings)
         {
-            recordings.ForEach(recording => { Console.WriteLine(recording.GetFileName()); });
+            /*
+            recordings.ForEach(recording =>
+            {
+                // Console.WriteLine(recording.GetFileName());
+            });
+            */
+            Console.WriteLine(recordings.Count + " recordings to download");
         }
     }
 }
