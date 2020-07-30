@@ -6,6 +6,7 @@ namespace VideoAudioExtractor
 {
     static class Program
     {
+        // Todo: fix this, looks dynamically
         private static readonly string configFile =
             "C:\\Users\\Martin\\Documents\\RiderProjects\\hikvision-video-audio-extractor\\config.xml";
 
