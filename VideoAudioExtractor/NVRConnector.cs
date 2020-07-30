@@ -281,20 +281,68 @@ namespace VideoAudioExtractor
                     }
                 }
 
-                ValidateRecordings(_recordings);
+                // Task task = Task.Run(async () => await DownloadRecordings(_recordings));
+                DownloadRecordings(_recordings);
             }
         }
 
 
-        private void ValidateRecordings(List<Recording> recordings)
+        private void DownloadRecordings(List<Recording> recordings)
         {
-            /*
-            recordings.ForEach(recording =>
-            {
-                // Console.WriteLine(recording.GetFileName());
-            });
-            */
             Console.WriteLine(recordings.Count + " recordings to download");
+            foreach (var recording in recordings)
+            {
+                DownloadRecording(recording);
+            }
+        }
+
+
+        private void DownloadRecording(Recording recording)
+        {
+            Console.WriteLine("running");
+            if (_mLDownHandle >= 0)
+            {
+                Console.WriteLine("Error, already downloading!");
+                return;
+            }
+
+            var sVideoFileName = _outputLocationPath + recording.GetFileName() + ".mp4";
+
+            // Download from nvr/camera by file name
+            _mLDownHandle = CHCNetSDK.NET_DVR_GetFileByName(_mLUserId, recording.GetFileName(),
+                sVideoFileName);
+            if (_mLDownHandle < 0)
+            {
+                _iLastErr = CHCNetSDK.NET_DVR_GetLastError();
+                _errorMsg = "NET_DVR_GetFileByName failed, error code= " + _iLastErr;
+                Console.WriteLine(_errorMsg);
+                return;
+            }
+
+            uint iOutValue = 0;
+
+            if (!CHCNetSDK.NET_DVR_PlayBackControl_V40(_mLDownHandle, CHCNetSDK.NET_DVR_PLAYSTART,
+                IntPtr.Zero, 0, IntPtr.Zero, ref iOutValue))
+            {
+                _iLastErr = CHCNetSDK.NET_DVR_GetLastError();
+                _errorMsg = "NET_DVR_PLAY_START failed, error code= " +
+                            _iLastErr; // Download controlling failed, print error code
+                Console.WriteLine(_errorMsg);
+                return;
+            }
+
+            var downloadProgress = 0;
+            
+            while (downloadProgress < 100)
+            {
+                // Get downloading process
+                downloadProgress = CHCNetSDK.NET_DVR_GetDownloadPos(_mLDownHandle);
+                Thread.Sleep(1 * 1000);
+                Console.WriteLine("Download progress: " + downloadProgress + "%");
+            }
+
+            _mLDownHandle = -1;
+            return;
         }
     }
 }

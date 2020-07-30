@@ -24,8 +24,8 @@ namespace VideoAudioExtractor
                 ConfigReader.GetOutputLocationPath
             );
             
-            Thread.Sleep(5 * 1000);
-            _nvrConnector.LogOutNvr();
+            //Thread.Sleep(5 * 1000);
+            //_nvrConnector.LogOutNvr();
             
 
             /*
