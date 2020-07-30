@@ -15,6 +15,8 @@ namespace VideoAudioExtractor
         private int _port = 8000;
         private string _username = string.Empty;
         private string _password = string.Empty;
+        private string _dbConnectionString = string.Empty;
+        private string _outputLocationPath = string.Empty;
 
         private readonly XmlDocument _config = new XmlDocument();
 
@@ -34,6 +36,8 @@ namespace VideoAudioExtractor
             _port = IntegerType.FromString(_config.SelectSingleNode(_configBase + "port").InnerText);
             _username = _config.SelectSingleNode(_configBase + "username").InnerText;
             _password = _config.SelectSingleNode(_configBase + "password").InnerText;
+            _dbConnectionString = _config.SelectSingleNode(_configBase + "dbConnectionString").InnerText;
+            _outputLocationPath = _config.SelectSingleNode(_configBase + "outputLocationPath").InnerText;
         }
 
         public int GetProcessSleepSeconds => _processSleepSeconds;
@@ -41,5 +45,7 @@ namespace VideoAudioExtractor
         public int GetPort => _port;
         public string GetUserName => _username;
         public string GetPassword => _password;
+        public string GetDbConnectionString => _dbConnectionString;
+        public string GetOutputLocationPath => _outputLocationPath;
     }
 }

@@ -6,10 +6,17 @@ namespace VideoAudioExtractor
     public class NVRConnector
     {
         // Connection variables
-        private string _ipAddress = string.Empty;
-        private Int16 _port = 8000;
-        private string _username = string.Empty;
-        private string _password = string.Empty;
+        private readonly string _ipAddress;
+        private readonly Int16 _port;
+        private readonly string _username;
+        private readonly string _password;
+
+        // Database
+        private Database _database = null;
+        private readonly string _dbConnString;
+
+        // Video output
+        private string _outputLocationPath;
 
         // Camera variables
         private Int32 i = 0;
@@ -28,12 +35,19 @@ namespace VideoAudioExtractor
         private long iSelIndex = 0; // Selected channel index
 
         // Constructor
-        public NVRConnector(string ipAddress, int port, string username, string password)
+        public NVRConnector(string ipAddress, int port, string username, string password,
+            string dbConnString, string outputLocationPath)
         {
             _ipAddress = ipAddress;
             _port = (Int16) port;
             _username = username;
             _password = password;
+
+
+            _dbConnString = dbConnString;
+            _database = new Database(_dbConnString);
+
+            _outputLocationPath = outputLocationPath;
 
             m_bInitSDK = CHCNetSDK.NET_DVR_Init();
             if (m_bInitSDK == false)
@@ -48,7 +62,7 @@ namespace VideoAudioExtractor
                 iChannelNum = new int[96];
             }
 
-            LoginLogoutNvr();
+            // LoginLogoutNvr();
         }
 
 
@@ -214,7 +228,7 @@ namespace VideoAudioExtractor
                                    Convert.ToString(struFileData.struStopTime.dwSecond);
 
                         // Todo: needs file handling and already downloaded checking
-                        
+
                         Console.WriteLine(str1 + " " + str2 + " - " + str3); // Print out found files
                     }
                     else if (result == CHCNetSDK.NET_DVR_FILE_NOFIND || result == CHCNetSDK.NET_DVR_NOMOREFILE)
