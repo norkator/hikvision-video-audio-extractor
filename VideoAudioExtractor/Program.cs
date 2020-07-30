@@ -9,12 +9,12 @@ namespace VideoAudioExtractor
             "C:\\Users\\Martin\\Documents\\RiderProjects\\hikvision-video-audio-extractor\\config.xml";
 
         private static readonly ConfigReader ConfigReader = new ConfigReader(configFile);
-        private static NVRConnector _nvrConnector = null;
+        private static NvrConnector _nvrConnector = null;
 
         static void Main(string[] args)
         {
             // This will initiate login to nvr
-            _nvrConnector = new NVRConnector(
+            _nvrConnector = new NvrConnector(
                 ConfigReader.GetIpAddress,
                 ConfigReader.GetPort,
                 ConfigReader.GetUserName,
@@ -22,15 +22,12 @@ namespace VideoAudioExtractor
                 ConfigReader.GetDbConnectionString,
                 ConfigReader.GetOutputLocationPath
             );
+            
+            Thread.Sleep(5 * 1000);
+            _nvrConnector.LogOutNvr();
+            
+
             /*
-            Thread.Sleep(1 * 1000);
-            _nvrConnector.SearchRecordings();
-
-            Thread.Sleep(10 * 1000); // Todo: remove, debugging only
-            _nvrConnector.LogOutNvr(); // Todo: remove debugging only
-            */
-
-
             Worker worker = new Worker(ConfigReader.GetProcessSleepSeconds);
             Thread t = new Thread(worker.DoWork) {IsBackground = true};
             t.Start();
@@ -45,6 +42,7 @@ namespace VideoAudioExtractor
             }
 
             t.Join();
+            */
         }
     }
 

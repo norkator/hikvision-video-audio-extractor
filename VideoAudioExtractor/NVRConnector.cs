@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using NVRCsharpDemo;
 
 namespace VideoAudioExtractor
 {
-    public class NVRConnector
+    public class NvrConnector
     {
         // Connection variables
         private readonly string _ipAddress;
@@ -12,30 +15,31 @@ namespace VideoAudioExtractor
         private readonly string _password;
 
         // Database
-        private Database _database = null;
-        private readonly string _dbConnString;
+        private readonly Database _database = null;
 
         // Video output
         private string _outputLocationPath;
 
+        // Variables
+        private List<Recording> _recordings = null;
+
         // Camera variables
-        private Int32 i = 0;
-        private bool m_bInitSDK = false;
-        private uint iLastErr = 0;
-        private Int32 m_lUserID = -1;
-        private CHCNetSDK.NET_DVR_DEVICEINFO_V30 DeviceInfo;
+        private Int32 _i = 0;
+        private uint _iLastErr = 0;
+        private Int32 _mLUserId = -1;
+        private CHCNetSDK.NET_DVR_DEVICEINFO_V30 _deviceInfo;
         private string _errorMsg = string.Empty;
-        private uint dwAChanTotalNum = 0;
-        private uint dwDChanTotalNum = 0;
-        private Int32 m_lFindHandle = -1;
+        private uint _dwAChanTotalNum = 0;
+        private uint _dwDChanTotalNum = 0;
+        private Int32 _mLFindHandle = -1;
         private Int32 m_lPlayHandle = -1;
-        private Int32 m_lDownHandle = -1;
-        private int[] iChannelNum;
-        private Int32 m_lTree = 0;
+        private Int32 _mLDownHandle = -1;
+        private readonly int[] _iChannelNum;
+        private Int32 _mLTree = 0;
         private long iSelIndex = 0; // Selected channel index
 
         // Constructor
-        public NVRConnector(string ipAddress, int port, string username, string password,
+        public NvrConnector(string ipAddress, int port, string username, string password,
             string dbConnString, string outputLocationPath)
         {
             _ipAddress = ipAddress;
@@ -43,14 +47,11 @@ namespace VideoAudioExtractor
             _username = username;
             _password = password;
 
-
-            _dbConnString = dbConnString;
-            _database = new Database(_dbConnString);
-
+            _database = new Database(dbConnString);
             _outputLocationPath = outputLocationPath;
 
-            m_bInitSDK = CHCNetSDK.NET_DVR_Init();
-            if (m_bInitSDK == false)
+            var mBInitSdk = CHCNetSDK.NET_DVR_Init();
+            if (mBInitSdk == false)
             {
                 Console.WriteLine("NET_DVR_Init error!");
                 return;
@@ -59,54 +60,81 @@ namespace VideoAudioExtractor
             {
                 //Save log of SDK
                 CHCNetSDK.NET_DVR_SetLogToFile(3, "C:\\SdkLog\\", true);
-                iChannelNum = new int[96];
+                _iChannelNum = new int[96];
             }
 
-            // LoginLogoutNvr();
+            OpenDatabaseConnection();
         }
 
 
-        private void LoginLogoutNvr()
+        /**
+         * Open database connection,
+         * if fails, will try again after 60 seconds
+         */
+        private void OpenDatabaseConnection()
         {
-            if (m_lUserID < 0)
+            Task<bool> dbConnected = Task.Run(async () => await _database.OpenDatabaseConnection());
+            if (dbConnected.Result)
+            {
+                GetLastRecordingEndTime();
+            }
+            else
+            {
+                Thread.Sleep(60 * 1000); // Sleep for a minute
+                OpenDatabaseConnection(); // Then try re open connection
+            }
+        }
+
+
+        private void GetLastRecordingEndTime()
+        {
+            Task<string> result = Task.Run(async () => await _database.GetLastRecordingEndTime());
+            LoginLogoutNvr(result.Result);
+        }
+
+
+        private void LoginLogoutNvr(string lastRecordingEndTime)
+        {
+            if (_mLUserId < 0)
             {
                 //Login the device
                 Console.WriteLine("Login target: " + _ipAddress + ":" + _port);
-                m_lUserID = CHCNetSDK.NET_DVR_Login_V30(_ipAddress, _port, _username, _password,
-                    ref DeviceInfo);
-                if (m_lUserID < 0)
+                _mLUserId = CHCNetSDK.NET_DVR_Login_V30(_ipAddress, _port, _username, _password,
+                    ref _deviceInfo);
+                if (_mLUserId < 0)
                 {
-                    iLastErr = CHCNetSDK.NET_DVR_GetLastError();
+                    _iLastErr = CHCNetSDK.NET_DVR_GetLastError();
                     _errorMsg =
-                        "NET_DVR_Login_V30 failed, error code= " + iLastErr; // Login failed, print error code
+                        "NET_DVR_Login_V30 failed, error code= " + _iLastErr; // Login failed, print error code
                     Console.WriteLine(_errorMsg);
-                    return;
                 }
                 else
                 {
                     Console.WriteLine("Login Success!");
                     // btnLogin.Text = "Logout";
 
-                    dwAChanTotalNum = (uint) DeviceInfo.byChanNum;
-                    dwDChanTotalNum = (uint) DeviceInfo.byIPChanNum + 256 * (uint) DeviceInfo.byHighDChanNum;
+                    _dwAChanTotalNum = _deviceInfo.byChanNum;
+                    _dwDChanTotalNum = _deviceInfo.byIPChanNum + 256 * (uint) _deviceInfo.byHighDChanNum;
 
-                    Console.WriteLine("Count of ip channels: " + dwDChanTotalNum);
+                    Console.WriteLine("Count of ip channels: " + _dwDChanTotalNum);
 
-                    if (dwDChanTotalNum > 0)
+                    if (_dwDChanTotalNum > 0)
                     {
                         // InfoIPChannel(); TODO: Implement later
                     }
                     else
                     {
                         Console.WriteLine("Channel    |    State");
-                        for (i = 0; i < dwAChanTotalNum; i++)
+                        for (_i = 0; _i < _dwAChanTotalNum; _i++)
                         {
-                            ListAnalogChannel(i + 1, 1);
-                            iChannelNum[i] = i + (int) DeviceInfo.byStartChan;
+                            ListAnalogChannel(_i + 1, 1);
+                            _iChannelNum[_i] = _i + _deviceInfo.byStartChan;
                         }
 
                         Console.WriteLine("This device has no IP channel!");
                     }
+                    
+                    SearchRecordings(lastRecordingEndTime);
                 }
             }
             else
@@ -118,51 +146,51 @@ namespace VideoAudioExtractor
                 }
 
                 //Logout the device
-                if (!CHCNetSDK.NET_DVR_Logout(m_lUserID))
+                if (!CHCNetSDK.NET_DVR_Logout(_mLUserId))
                 {
-                    iLastErr = CHCNetSDK.NET_DVR_GetLastError();
-                    _errorMsg = "NET_DVR_Logout failed, error code= " + iLastErr;
+                    _iLastErr = CHCNetSDK.NET_DVR_GetLastError();
+                    _errorMsg = "NET_DVR_Logout failed, error code= " + _iLastErr;
                     Console.WriteLine(_errorMsg);
                     return;
                 }
 
-                m_lUserID = -1;
+                _mLUserId = -1;
                 Console.WriteLine("Logged out from NVR");
             }
-
-            return;
+            
         }
 
         public void LogOutNvr()
         {
-            LoginLogoutNvr();
+            if (_mLUserId >= 0)
+            {
+                LoginLogoutNvr(null);
+            }
+            else
+            {
+                Console.WriteLine("Already logged out from NVR");
+            }
         }
 
 
         private void ListAnalogChannel(Int32 iChanNo, byte byEnable)
         {
             var str1 = $"Camera {iChanNo}";
-            string str2;
-            m_lTree++;
-            if (byEnable == 0)
-            {
-                str2 = "Disabled"; // This channel has been disabled               
-            }
-            else
-            {
-                str2 = "Enabled"; // This channel has been enabled  
-            }
+            _mLTree++;
+            var str2 = byEnable == 0 ? "Disabled" : "Enabled";
 
-            Console.WriteLine(str1 + "    |    " + str2);
+            Console.WriteLine(str1 + "        " + str2);
         }
 
 
-        public void SearchRecordings()
+        private void SearchRecordings(string lastRecordingEndTime)
         {
+            _recordings = new List<Recording>();
+
             CHCNetSDK.NET_DVR_FILECOND_V40 struFileCond_V40 = new CHCNetSDK.NET_DVR_FILECOND_V40();
 
             // TODO: nothing yet selects iSelIndex, or is 0 "first one"?
-            struFileCond_V40.lChannel = iChannelNum[(int) iSelIndex]; //Channel number
+            struFileCond_V40.lChannel = _iChannelNum[(int) iSelIndex]; //Channel number
             struFileCond_V40.dwFileType = 0xff; //0xff-All，0-Timing record，1-Motion detection，2-Alarm trigger，...
             struFileCond_V40.dwIsLocked =
                 0xff; //0-unfixed file，1-fixed file，0xff means all files（including fixed and unfixed files）
@@ -173,41 +201,39 @@ namespace VideoAudioExtractor
             struFileCond_V40.struStartTime.dwYear = (uint) today.Year;
             struFileCond_V40.struStartTime.dwMonth = (uint) today.Month;
             struFileCond_V40.struStartTime.dwDay = (uint) today.Day;
-            struFileCond_V40.struStartTime.dwHour = (uint) 0;
-            struFileCond_V40.struStartTime.dwMinute = (uint) 0;
-            struFileCond_V40.struStartTime.dwSecond = (uint) 0;
+            struFileCond_V40.struStartTime.dwHour = 0;
+            struFileCond_V40.struStartTime.dwMinute = 0;
+            struFileCond_V40.struStartTime.dwSecond = 0;
 
             //Set the stopping time to search video files
             struFileCond_V40.struStopTime.dwYear = (uint) today.Year;
             struFileCond_V40.struStopTime.dwMonth = (uint) today.Month;
             struFileCond_V40.struStopTime.dwDay = (uint) today.Day;
-            struFileCond_V40.struStopTime.dwHour = (uint) 23;
-            struFileCond_V40.struStopTime.dwMinute = (uint) 59;
-            struFileCond_V40.struStopTime.dwSecond = (uint) 59;
+            struFileCond_V40.struStopTime.dwHour = 23;
+            struFileCond_V40.struStopTime.dwMinute = 59;
+            struFileCond_V40.struStopTime.dwSecond = 59;
 
             //Start to search video files 
-            m_lFindHandle = CHCNetSDK.NET_DVR_FindFile_V40(m_lUserID, ref struFileCond_V40);
+            _mLFindHandle = CHCNetSDK.NET_DVR_FindFile_V40(_mLUserId, ref struFileCond_V40);
 
-            if (m_lFindHandle < 0)
+            if (_mLFindHandle < 0)
             {
-                iLastErr = CHCNetSDK.NET_DVR_GetLastError();
+                _iLastErr = CHCNetSDK.NET_DVR_GetLastError();
                 _errorMsg = "NET_DVR_FindFile_V40 failed, error code= " +
-                            iLastErr; // find files failed，print error code
+                            _iLastErr; // find files failed，print error code
                 Console.WriteLine(_errorMsg);
-                return;
             }
             else
             {
                 CHCNetSDK.NET_DVR_FINDDATA_V30 struFileData = new CHCNetSDK.NET_DVR_FINDDATA_V30();
-                ;
                 while (true)
                 {
                     //Get file information one by one.
-                    int result = CHCNetSDK.NET_DVR_FindNextFile_V30(m_lFindHandle, ref struFileData);
+                    int result = CHCNetSDK.NET_DVR_FindNextFile_V30(_mLFindHandle, ref struFileData);
 
                     if (result == CHCNetSDK.NET_DVR_ISFINDING) //Searching, please wait
                     {
-                        continue;
+                        // continue;
                     }
                     else if (result == CHCNetSDK.NET_DVR_FILE_SUCCESS) //Get the file information successfully
                     {
@@ -226,10 +252,13 @@ namespace VideoAudioExtractor
                                    Convert.ToString(struFileData.struStopTime.dwHour) + ":" +
                                    Convert.ToString(struFileData.struStopTime.dwMinute) + ":" +
                                    Convert.ToString(struFileData.struStopTime.dwSecond);
+                        
+                        Console.WriteLine(str3);
+                        Console.Write(lastRecordingEndTime);
 
-                        // Todo: needs file handling and already downloaded checking
-
-                        Console.WriteLine(str1 + " " + str2 + " - " + str3); // Print out found files
+                        _recordings.Add(
+                            new Recording(0, str1, str2, str3)
+                        );
                     }
                     else if (result == CHCNetSDK.NET_DVR_FILE_NOFIND || result == CHCNetSDK.NET_DVR_NOMOREFILE)
                     {
@@ -240,7 +269,15 @@ namespace VideoAudioExtractor
                         break;
                     }
                 }
+
+                ValidateRecordings(_recordings);
             }
+        }
+
+
+        private void ValidateRecordings(List<Recording> recordings)
+        {
+            recordings.ForEach(recording => { Console.WriteLine(recording.GetFileName()); });
         }
     }
 }
