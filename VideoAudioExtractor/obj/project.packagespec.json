@@ -1,11 +1,14 @@
 ﻿{
   "version": "1.0.0",
   "restore": {
-    "projectUniqueName": "C:\\Users\\Martin\\Documents\\RiderProjects\\hikvision-video-audio-extractor\\VideoAudioExtractor\\VideoAudioExtractor.csproj",
+    "projectUniqueName": "C:\\Users\\Administrator\\Documents\\RiderProjects\\hikvision-video-audio-extractor\\VideoAudioExtractor\\VideoAudioExtractor.csproj",
     "projectName": "VideoAudioExtractor",
-    "projectPath": "C:\\Users\\Martin\\Documents\\RiderProjects\\hikvision-video-audio-extractor\\VideoAudioExtractor\\VideoAudioExtractor.csproj",
-    "outputPath": "C:\\Users\\Martin\\Documents\\RiderProjects\\hikvision-video-audio-extractor\\VideoAudioExtractor\\obj\\",
+    "projectPath": "C:\\Users\\Administrator\\Documents\\RiderProjects\\hikvision-video-audio-extractor\\VideoAudioExtractor\\VideoAudioExtractor.csproj",
+    "outputPath": "C:\\Users\\Administrator\\Documents\\RiderProjects\\hikvision-video-audio-extractor\\VideoAudioExtractor\\obj\\",
     "projectStyle": "PackageReference",
+    "fallbackFolders": [
+      "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+    ],
     "originalTargetFrameworks": [
       "netcoreapp3.1"
     ],
@@ -26,6 +29,10 @@
   "frameworks": {
     "netcoreapp3.1": {
       "dependencies": {
+        "FFMpegCore": {
+          "target": "Package",
+          "version": "[2.2.4, )"
+        },
         "Npgsql": {
           "target": "Package",
           "version": "[4.1.4, )"
@@ -46,7 +53,7 @@
           "privateAssets": "all"
         }
       },
-      "runtimeIdentifierGraphPath": "C:\\Users\\Martin\\.dotnet\\sdk\\3.1.301\\RuntimeIdentifierGraph.json"
+      "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.302\\RuntimeIdentifierGraph.json"
     }
   }
 }

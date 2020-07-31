@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="FFMpegCore" Version="2.2.4" />
       <PackageReference Include="Npgsql" Version="4.1.4" />
     </ItemGroup>
 

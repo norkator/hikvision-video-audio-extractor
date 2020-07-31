@@ -2,6 +2,243 @@
   "version": 3,
   "targets": {
     ".NETCoreApp,Version=v3.1": {
+      "FFMpegCore/2.2.4": {
+        "type": "package",
+        "dependencies": {
+          "Instances": "1.6.0",
+          "System.Drawing.Common": "4.7.0",
+          "System.Text.Json": "4.7.2"
+        },
+        "compile": {
+          "lib/netstandard2.0/FFMpegCore.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/FFMpegCore.dll": {}
+        },
+        "contentFiles": {
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/ffprobe.xsd": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libvpx-1080p.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libvpx-1080p50_60.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libvpx-360p.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libvpx-720p.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libvpx-720p50_60.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libvpx-ultrafast.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-baseline.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-fast.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-fast_firstpass.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-faster.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-faster_firstpass.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-ipod320.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-ipod640.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-lossless_fast.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-lossless_max.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-lossless_medium.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-lossless_slow.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-lossless_slower.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-lossless_ultrafast.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-main.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-medium.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-medium_firstpass.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-placebo.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-placebo_firstpass.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-slow.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-slow_firstpass.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-slower.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-slower_firstpass.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-superfast.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-superfast_firstpass.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-ultrafast.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-ultrafast_firstpass.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-veryfast.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-veryfast_firstpass.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-veryslow.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-veryslow_firstpass.ffpreset": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          }
+        }
+      },
+      "Instances/1.6.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Instances.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Instances.dll": {}
+        }
+      },
+      "Microsoft.NETCore.Platforms/3.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard1.0/_._": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/_._": {}
+        }
+      },
+      "Microsoft.Win32.SystemEvents/4.7.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "3.1.0"
+        },
+        "compile": {
+          "ref/netstandard2.0/_._": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Win32.SystemEvents.dll": {}
+        },
+        "runtimeTargets": {
+          "runtimes/win/lib/netcoreapp3.0/Microsoft.Win32.SystemEvents.dll": {
+            "assetType": "runtime",
+            "rid": "win"
+          }
+        }
+      },
       "Npgsql/4.1.4": {
         "type": "package",
         "dependencies": {
@@ -14,6 +251,29 @@
           "lib/netcoreapp3.0/Npgsql.dll": {}
         }
       },
+      "System.Drawing.Common/4.7.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "3.1.0",
+          "Microsoft.Win32.SystemEvents": "4.7.0"
+        },
+        "compile": {
+          "ref/netcoreapp3.0/System.Drawing.Common.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Drawing.Common.dll": {}
+        },
+        "runtimeTargets": {
+          "runtimes/unix/lib/netcoreapp3.0/System.Drawing.Common.dll": {
+            "assetType": "runtime",
+            "rid": "unix"
+          },
+          "runtimes/win/lib/netcoreapp3.0/System.Drawing.Common.dll": {
+            "assetType": "runtime",
+            "rid": "win"
+          }
+        }
+      },
       "System.Runtime.CompilerServices.Unsafe/4.6.0": {
         "type": "package",
         "compile": {
@@ -22,10 +282,163 @@
         "runtime": {
           "lib/netcoreapp2.0/System.Runtime.CompilerServices.Unsafe.dll": {}
         }
+      },
+      "System.Text.Json/4.7.2": {
+        "type": "package",
+        "compile": {
+          "lib/netcoreapp3.0/System.Text.Json.dll": {}
+        },
+        "runtime": {
+          "lib/netcoreapp3.0/System.Text.Json.dll": {}
+        }
       }
     }
   },
   "libraries": {
+    "FFMpegCore/2.2.4": {
+      "sha512": "k5NNbyXueaFw6atFQbLz3i5fD5CSVXJ8rsMDsZcABOPSBxMeiHajZLcBGeLGaMEUP0NnYo5iMz53eIcX7JQvhw==",
+      "type": "package",
+      "path": "ffmpegcore/2.2.4",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "content/FFMPEG/bin/presets/ffprobe.xsd",
+        "content/FFMPEG/bin/presets/libvpx-1080p.ffpreset",
+        "content/FFMPEG/bin/presets/libvpx-1080p50_60.ffpreset",
+        "content/FFMPEG/bin/presets/libvpx-360p.ffpreset",
+        "content/FFMPEG/bin/presets/libvpx-720p.ffpreset",
+        "content/FFMPEG/bin/presets/libvpx-720p50_60.ffpreset",
+        "content/FFMPEG/bin/presets/libvpx-ultrafast.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-baseline.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-fast.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-fast_firstpass.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-faster.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-faster_firstpass.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-ipod320.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-ipod640.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-lossless_fast.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-lossless_max.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-lossless_medium.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-lossless_slow.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-lossless_slower.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-lossless_ultrafast.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-main.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-medium.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-medium_firstpass.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-placebo.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-placebo_firstpass.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-slow.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-slow_firstpass.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-slower.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-slower_firstpass.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-superfast.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-superfast_firstpass.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-ultrafast.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-ultrafast_firstpass.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-veryfast.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-veryfast_firstpass.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-veryslow.ffpreset",
+        "content/FFMPEG/bin/presets/libx264-veryslow_firstpass.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/ffprobe.xsd",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libvpx-1080p.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libvpx-1080p50_60.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libvpx-360p.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libvpx-720p.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libvpx-720p50_60.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libvpx-ultrafast.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-baseline.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-fast.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-fast_firstpass.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-faster.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-faster_firstpass.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-ipod320.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-ipod640.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-lossless_fast.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-lossless_max.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-lossless_medium.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-lossless_slow.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-lossless_slower.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-lossless_ultrafast.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-main.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-medium.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-medium_firstpass.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-placebo.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-placebo_firstpass.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-slow.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-slow_firstpass.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-slower.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-slower_firstpass.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-superfast.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-superfast_firstpass.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-ultrafast.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-ultrafast_firstpass.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-veryfast.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-veryfast_firstpass.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-veryslow.ffpreset",
+        "contentFiles/any/netstandard2.0/FFMPEG/bin/presets/libx264-veryslow_firstpass.ffpreset",
+        "ffmpegcore.2.2.4.nupkg.sha512",
+        "ffmpegcore.nuspec",
+        "lib/netstandard2.0/FFMpegCore.dll"
+      ]
+    },
+    "Instances/1.6.0": {
+      "sha512": "lSStCbGPexsGRjROxnYGlydlKiS7Qmcrg2Y51baAB1QM4NU4KuWXkIIOFocvMRlF7EUzSBcuELuNky/So0TllQ==",
+      "type": "package",
+      "path": "instances/1.6.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "instances.1.6.0.nupkg.sha512",
+        "instances.nuspec",
+        "lib/netstandard2.0/Instances.dll"
+      ]
+    },
+    "Microsoft.NETCore.Platforms/3.1.0": {
+      "sha512": "z7aeg8oHln2CuNulfhiLYxCVMPEwBl3rzicjvIX+4sUuCwvXw5oXQEtbiU2c0z4qYL5L3Kmx0mMA/+t/SbY67w==",
+      "type": "package",
+      "path": "microsoft.netcore.platforms/3.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/netstandard1.0/_._",
+        "microsoft.netcore.platforms.3.1.0.nupkg.sha512",
+        "microsoft.netcore.platforms.nuspec",
+        "runtime.json",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
+    "Microsoft.Win32.SystemEvents/4.7.0": {
+      "sha512": "mtVirZr++rq+XCDITMUdnETD59XoeMxSpLRIII7JRI6Yj0LEDiO1pPn0ktlnIj12Ix8bfvQqQDMMIF9wC98oCA==",
+      "type": "package",
+      "path": "microsoft.win32.systemevents/4.7.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net461/Microsoft.Win32.SystemEvents.dll",
+        "lib/net461/Microsoft.Win32.SystemEvents.xml",
+        "lib/netstandard2.0/Microsoft.Win32.SystemEvents.dll",
+        "lib/netstandard2.0/Microsoft.Win32.SystemEvents.xml",
+        "microsoft.win32.systemevents.4.7.0.nupkg.sha512",
+        "microsoft.win32.systemevents.nuspec",
+        "ref/net461/Microsoft.Win32.SystemEvents.dll",
+        "ref/net461/Microsoft.Win32.SystemEvents.xml",
+        "ref/net472/Microsoft.Win32.SystemEvents.dll",
+        "ref/net472/Microsoft.Win32.SystemEvents.xml",
+        "ref/netstandard2.0/Microsoft.Win32.SystemEvents.dll",
+        "ref/netstandard2.0/Microsoft.Win32.SystemEvents.xml",
+        "runtimes/win/lib/netcoreapp2.0/Microsoft.Win32.SystemEvents.dll",
+        "runtimes/win/lib/netcoreapp2.0/Microsoft.Win32.SystemEvents.xml",
+        "runtimes/win/lib/netcoreapp3.0/Microsoft.Win32.SystemEvents.dll",
+        "runtimes/win/lib/netcoreapp3.0/Microsoft.Win32.SystemEvents.xml",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
     "Npgsql/4.1.4": {
       "sha512": "qLwnSF7GAAxxrNFH3EprG352CJbhTCIDkk9PJ3/6aBeMOZBq+QMI1Yxsi9aUrBJwE51PaMLIYw0eq/bv9CGQTw==",
       "type": "package",
@@ -44,6 +457,45 @@
         "npgsql.4.1.4.nupkg.sha512",
         "npgsql.nuspec",
         "postgresql.png"
+      ]
+    },
+    "System.Drawing.Common/4.7.0": {
+      "sha512": "v+XbyYHaZjDfn0ENmJEV1VYLgGgCTx1gnfOBcppowbpOAriglYgGCvFCPr2EEZyBvXlpxbEsTwkOlInl107ahA==",
+      "type": "package",
+      "path": "system.drawing.common/4.7.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net461/System.Drawing.Common.dll",
+        "lib/netstandard2.0/System.Drawing.Common.dll",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net461/System.Drawing.Common.dll",
+        "ref/netcoreapp3.0/System.Drawing.Common.dll",
+        "ref/netcoreapp3.0/System.Drawing.Common.xml",
+        "ref/netstandard2.0/System.Drawing.Common.dll",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "runtimes/unix/lib/netcoreapp2.0/System.Drawing.Common.dll",
+        "runtimes/unix/lib/netcoreapp3.0/System.Drawing.Common.dll",
+        "runtimes/unix/lib/netcoreapp3.0/System.Drawing.Common.xml",
+        "runtimes/win/lib/netcoreapp2.0/System.Drawing.Common.dll",
+        "runtimes/win/lib/netcoreapp3.0/System.Drawing.Common.dll",
+        "runtimes/win/lib/netcoreapp3.0/System.Drawing.Common.xml",
+        "system.drawing.common.4.7.0.nupkg.sha512",
+        "system.drawing.common.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
       ]
     },
     "System.Runtime.CompilerServices.Unsafe/4.6.0": {
@@ -70,27 +522,54 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
+    },
+    "System.Text.Json/4.7.2": {
+      "sha512": "TcMd95wcrubm9nHvJEQs70rC0H/8omiSGGpU4FQ/ZA1URIqD4pjmFJh2Mfv1yH1eHgJDWTi2hMDXwTET+zOOyg==",
+      "type": "package",
+      "path": "system.text.json/4.7.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net461/System.Text.Json.dll",
+        "lib/net461/System.Text.Json.xml",
+        "lib/netcoreapp3.0/System.Text.Json.dll",
+        "lib/netcoreapp3.0/System.Text.Json.xml",
+        "lib/netstandard2.0/System.Text.Json.dll",
+        "lib/netstandard2.0/System.Text.Json.xml",
+        "system.text.json.4.7.2.nupkg.sha512",
+        "system.text.json.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
     }
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v3.1": [
+      "FFMpegCore >= 2.2.4",
       "Npgsql >= 4.1.4"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Martin\\.nuget\\packages\\": {}
+    "C:\\Users\\Administrator\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Martin\\Documents\\RiderProjects\\hikvision-video-audio-extractor\\VideoAudioExtractor\\VideoAudioExtractor.csproj",
+      "projectUniqueName": "C:\\Users\\Administrator\\Documents\\RiderProjects\\hikvision-video-audio-extractor\\VideoAudioExtractor\\VideoAudioExtractor.csproj",
       "projectName": "VideoAudioExtractor",
-      "projectPath": "C:\\Users\\Martin\\Documents\\RiderProjects\\hikvision-video-audio-extractor\\VideoAudioExtractor\\VideoAudioExtractor.csproj",
-      "packagesPath": "C:\\Users\\Martin\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Martin\\Documents\\RiderProjects\\hikvision-video-audio-extractor\\VideoAudioExtractor\\obj\\",
+      "projectPath": "C:\\Users\\Administrator\\Documents\\RiderProjects\\hikvision-video-audio-extractor\\VideoAudioExtractor\\VideoAudioExtractor.csproj",
+      "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Administrator\\Documents\\RiderProjects\\hikvision-video-audio-extractor\\VideoAudioExtractor\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+      ],
       "configFilePaths": [
-        "C:\\Users\\Martin\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
@@ -112,6 +591,10 @@
     "frameworks": {
       "netcoreapp3.1": {
         "dependencies": {
+          "FFMpegCore": {
+            "target": "Package",
+            "version": "[2.2.4, )"
+          },
           "Npgsql": {
             "target": "Package",
             "version": "[4.1.4, )"
@@ -132,7 +615,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Users\\Martin\\.dotnet\\sdk\\3.1.301\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.302\\RuntimeIdentifierGraph.json"
       }
     }
   }
