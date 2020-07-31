@@ -6,7 +6,7 @@ namespace VideoAudioExtractor
 {
     static class Program
     {
-        // Todo: fix this, looks dynamically
+        // Todo: fix this to look application installation path
         private static readonly string configFile =
             "C:\\Users\\Martin\\Documents\\RiderProjects\\hikvision-video-audio-extractor\\config.xml";
 
@@ -22,7 +22,10 @@ namespace VideoAudioExtractor
                 ConfigReader.GetUserName,
                 ConfigReader.GetPassword,
                 ConfigReader.GetDbConnectionString,
-                ConfigReader.GetOutputLocationPath
+                ConfigReader.GetOutputLocationPath,
+                ConfigReader.GetAudioExportPath,
+                ConfigReader.GetBoolDeleteVideos,
+                ConfigReader.GetCameraName
             );
             
             //Thread.Sleep(5 * 1000);

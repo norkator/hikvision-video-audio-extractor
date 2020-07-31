@@ -31,10 +31,11 @@ namespace VideoAudioExtractor
         public async Task InsertRecording(Recording recording)
         {
             // Insert some data
-            await using var cmd = new NpgsqlCommand( // Todo: populate camera name field later...
-                "INSERT INTO recordings (file_name, start_time, end_time) VALUES (@fn, @st, @et)",
+            await using var cmd = new NpgsqlCommand(
+                "INSERT INTO recordings (camera_name, file_name, start_time, end_time) VALUES (@cn, @fn, @st, @et)",
                 _connection);
 
+            cmd.Parameters.AddWithValue("cn", recording.GetCameraName());
             cmd.Parameters.AddWithValue("fn", recording.GetFileName());
             cmd.Parameters.AddWithValue("st", recording.GetDtStartTime());
             cmd.Parameters.AddWithValue("et", recording.GetDtEndTime());

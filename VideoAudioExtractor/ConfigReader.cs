@@ -17,6 +17,9 @@ namespace VideoAudioExtractor
         private string _password = string.Empty;
         private string _dbConnectionString = string.Empty;
         private string _outputLocationPath = string.Empty;
+        private bool _deleteVideos = false;
+        private string _audioExportPath = string.Empty;
+        private string _cameraName = string.Empty;
 
         private readonly XmlDocument _config = new XmlDocument();
 
@@ -38,6 +41,9 @@ namespace VideoAudioExtractor
             _password = _config.SelectSingleNode(_configBase + "password").InnerText;
             _dbConnectionString = _config.SelectSingleNode(_configBase + "dbConnectionString").InnerText;
             _outputLocationPath = _config.SelectSingleNode(_configBase + "outputLocationPath").InnerText;
+            _deleteVideos = _config.SelectSingleNode(_configBase + "deleteVideos").InnerText == "true";
+            _audioExportPath = _config.SelectSingleNode(_configBase + "audioExportPath").InnerText;
+            _cameraName = _config.SelectSingleNode(_configBase + "cameraName").InnerText;
         }
 
         public int GetProcessSleepSeconds => _processSleepSeconds;
@@ -47,5 +53,8 @@ namespace VideoAudioExtractor
         public string GetPassword => _password;
         public string GetDbConnectionString => _dbConnectionString;
         public string GetOutputLocationPath => _outputLocationPath;
+        public bool GetBoolDeleteVideos => _deleteVideos;
+        public string GetAudioExportPath => _audioExportPath;
+        public string GetCameraName => _cameraName;
     }
 }

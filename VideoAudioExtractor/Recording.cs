@@ -6,7 +6,7 @@ namespace VideoAudioExtractor
     public class Recording
     {
         // Variables
-        private readonly string _cameraName = String.Empty;
+        private readonly string _cameraName;
         private readonly BigInteger _id;
         private readonly string _fileName;
         private readonly string _startTime;
@@ -15,15 +15,20 @@ namespace VideoAudioExtractor
         private DateTime _dtEndTime;
 
         // Constructor
-        public Recording(BigInteger id, string fileName, string startTime, string endTime)
+        public Recording(string cameraName, BigInteger id, string fileName, string startTime, string endTime)
         {
-            // _cameraName = cameraName;
+            _cameraName = cameraName;
             _id = id;
             _fileName = fileName;
             _startTime = startTime;
             _endTime = endTime;
         }
 
+        public string GetCameraName()
+        {
+            return _cameraName;
+        }
+        
         public BigInteger GetId()
         {
             return _id;

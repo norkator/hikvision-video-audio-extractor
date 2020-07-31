@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using FFMpegCore;
 using NVRCsharpDemo;
 
 namespace VideoAudioExtractor
@@ -18,8 +20,15 @@ namespace VideoAudioExtractor
         // Database
         private readonly Database _database = null;
 
+        // Camera
+        private readonly string _cameraName;
+
         // Video output
-        private string _outputLocationPath;
+        private readonly string _videoExtension = $"." + $"mp4";
+        private readonly string _audioExtension = $"." + $"mp3";
+        private readonly string _outputLocationPath;
+        private readonly string _audioExportPath;
+        private readonly bool _deleteVideos;
 
         // Camera variables
         private Int32 _i = 0;
@@ -33,20 +42,23 @@ namespace VideoAudioExtractor
         private Int32 m_lPlayHandle = -1;
         private Int32 _mLDownHandle = -1;
         private readonly int[] _iChannelNum;
-        private Int32 _mLTree = 0;
         private long iSelIndex = 0; // Selected channel index
 
         // Constructor
         public NvrConnector(string ipAddress, int port, string username, string password,
-            string dbConnString, string outputLocationPath)
+            string dbConnString, string outputLocationPath, string audioExportPath, bool deleteVideos,
+            string cameraName)
         {
             _ipAddress = ipAddress;
             _port = (Int16) port;
             _username = username;
             _password = password;
 
+            _cameraName = cameraName;
             _database = new Database(dbConnString);
             _outputLocationPath = outputLocationPath;
+            _audioExportPath = audioExportPath;
+            _deleteVideos = deleteVideos;
 
             var mBInitSdk = CHCNetSDK.NET_DVR_Init();
             if (mBInitSdk == false)
@@ -84,7 +96,7 @@ namespace VideoAudioExtractor
         {
             // Get latest recording end time we have
             var lastRecordingEndTime = GetLastRecordingEndTime();
-            if (LoginLogoutNvr(lastRecordingEndTime))
+            if (LoginLogoutNvr())
             {
                 // Find recordings from camera
                 Task<List<Recording>> searchRecordingsTask = SearchRecordings(lastRecordingEndTime);
@@ -97,14 +109,13 @@ namespace VideoAudioExtractor
                     Task<List<Recording>> downloadedRecordingsTask = DownloadRecordings(recordings);
                     await downloadedRecordingsTask;
                     List<Recording> downloadedRecordings = downloadedRecordingsTask.Result;
-                    
+
                     // Log out from nvr at this point
                     LogOutNvr();
 
                     // Update database, set as downloaded
                     Task<bool> updateDatabaseTask = UpdateDatabase(downloadedRecordings);
                     await updateDatabaseTask;
-                    
                 }
                 else
                 {
@@ -122,7 +133,7 @@ namespace VideoAudioExtractor
         }
 
 
-        private Boolean LoginLogoutNvr(DateTime lastRecordingEndTime)
+        private Boolean LoginLogoutNvr()
         {
             if (_mLUserId < 0)
             {
@@ -195,7 +206,7 @@ namespace VideoAudioExtractor
         {
             if (_mLUserId >= 0)
             {
-                LoginLogoutNvr(new DateTime());
+                LoginLogoutNvr();
             }
             else
             {
@@ -204,11 +215,10 @@ namespace VideoAudioExtractor
         }
 
 
-        private void ListAnalogChannel(Int32 iChanNo, byte byEnable)
+        private void ListAnalogChannel(Int32 iChanNo, byte enable)
         {
             var str1 = $"Camera {iChanNo}";
-            _mLTree++;
-            var str2 = byEnable == 0 ? "Disabled" : "Enabled";
+            var str2 = enable == 0 ? "Disabled" : "Enabled";
 
             Console.WriteLine(str1 + "        " + str2);
         }
@@ -240,7 +250,7 @@ namespace VideoAudioExtractor
             struFileCondV40.struStopTime.dwYear = (uint) today.Year;
             struFileCondV40.struStopTime.dwMonth = (uint) today.Month;
             struFileCondV40.struStopTime.dwDay = (uint) today.Day;
-            struFileCondV40.struStopTime.dwHour = 23;
+            struFileCondV40.struStopTime.dwHour = 23; // This most likely will miss files when day changes
             struFileCondV40.struStopTime.dwMinute = 59;
             struFileCondV40.struStopTime.dwSecond = 59;
 
@@ -270,13 +280,15 @@ namespace VideoAudioExtractor
                     {
                         var str1 = struFileData.sFileName;
 
-                        var str2 = Convert.ToString(struFileData.struStartTime.dwYear) + "-" +
-                                   Convert.ToString(struFileData.struStartTime.dwMonth) + "-" +
-                                   Convert.ToString(struFileData.struStartTime.dwDay) + " " +
-                                   Convert.ToString(struFileData.struStartTime.dwHour) + ":" +
-                                   Convert.ToString(struFileData.struStartTime.dwMinute) + ":" +
-                                   Convert.ToString(struFileData.struStartTime.dwSecond);
+                        var sDYear = Convert.ToString(struFileData.struStartTime.dwYear);
+                        var sDMonth = Convert.ToString(struFileData.struStartTime.dwMonth);
+                        var sDDAy = Convert.ToString(struFileData.struStartTime.dwDay);
+                        var sDHour = Convert.ToString(struFileData.struStartTime.dwHour);
+                        var sDMinute = Convert.ToString(struFileData.struStartTime.dwMinute);
+                        var sDSecond = Convert.ToString(struFileData.struStartTime.dwSecond);
 
+                        var str2 = sDYear + "-" + sDMonth + "-" + sDDAy + " " +
+                                   sDHour + ":" + sDMinute + ":" + sDSecond;
 
                         var eDYear = Convert.ToString(struFileData.struStopTime.dwYear);
                         var eDMonth = Convert.ToString(struFileData.struStopTime.dwMonth);
@@ -288,15 +300,16 @@ namespace VideoAudioExtractor
                         var str3 = eDYear + "-" + eDMonth + "-" + eDDAy + " " +
                                    eDHour + ":" + eDMinute + ":" + eDSecond;
 
-                        DateTime recordingEndDate = DateTime.ParseExact(
-                            str3,
-                            "yyyy-M-d H:m:s", // Todo: verify later with different cases!
-                            CultureInfo.InvariantCulture
-                        );
+                        DateTime recordingStartDate =
+                            DateTime.ParseExact(str2, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+
+                        DateTime recordingEndDate =
+                            DateTime.ParseExact(str3, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
 
                         if (DateTime.Compare(recordingEndDate, lastRecordingEndTime) == 1)
                         {
-                            Recording recording = new Recording(0, str1, str2, str3);
+                            Recording recording = new Recording(_cameraName, 0, str1, str2, str3);
+                            recording.SetDtStartTime(recordingStartDate);
                             recording.SetDtEndTime(recordingEndDate);
                             recordings.Add(recording);
                             Console.WriteLine("Found non existing: " + str1 + " - " + str2);
@@ -328,6 +341,11 @@ namespace VideoAudioExtractor
                 if (await DownloadRecording(recording))
                 {
                     downloadedRecordings.Add(recording);
+                    await ExtractAudio(recording);
+                    if (_deleteVideos)
+                    {
+                        DeleteVideoFile(recording);
+                    }
                 }
             }
 
@@ -343,7 +361,7 @@ namespace VideoAudioExtractor
                 return false;
             }
 
-            var sVideoFileName = _outputLocationPath + recording.GetFileName() + ".mp4";
+            var sVideoFileName = _outputLocationPath + recording.GetFileName() + _videoExtension;
 
             // Download from nvr/camera by file name
             _mLDownHandle = CHCNetSDK.NET_DVR_GetFileByName(_mLUserId, recording.GetFileName(),
@@ -383,6 +401,14 @@ namespace VideoAudioExtractor
         }
 
 
+        private async Task<bool> ExtractAudio(Recording recording)
+        {
+            return FFMpeg.ExtractAudio(
+                _outputLocationPath + recording.GetFileName() + _videoExtension,
+                _audioExportPath + recording.GetFileName() + _audioExtension);
+        }
+
+
         private async Task<bool> UpdateDatabase(List<Recording> downloadedRecordings)
         {
             foreach (var recording in downloadedRecordings)
@@ -391,6 +417,14 @@ namespace VideoAudioExtractor
             }
 
             return true;
+        }
+
+        private void DeleteVideoFile(Recording recording)
+        {
+            if (File.Exists(_outputLocationPath + recording.GetFileName() + _videoExtension))
+            {
+                File.Delete(_outputLocationPath + recording.GetFileName() + _videoExtension);
+            }
         }
     }
 }

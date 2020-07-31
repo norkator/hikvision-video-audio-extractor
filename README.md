@@ -18,3 +18,10 @@ Contents of `HCNetSDK.zip` are unzipped under `VideoAudioExtractor\bin\Debug\bin
 
 Production
 ------ 
+
+
+
+config.xml
+======
+
+todo
