@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using FFMpegCore;
@@ -403,6 +402,8 @@ namespace VideoAudioExtractor
 
         private async Task<bool> ExtractAudio(Recording recording)
         {
+            Console.WriteLine("Video input path: " + _outputLocationPath + recording.GetFileName() + _videoExtension);
+            Console.WriteLine("Audio export path: " + _audioExportPath + recording.GetFileName() + _audioExtension);
             return FFMpeg.ExtractAudio(
                 _outputLocationPath + recording.GetFileName() + _videoExtension,
                 _audioExportPath + recording.GetFileName() + _audioExtension);
@@ -421,10 +422,13 @@ namespace VideoAudioExtractor
 
         private void DeleteVideoFile(Recording recording)
         {
+            Console.WriteLine("Deleting " + _outputLocationPath + recording.GetFileName() + _videoExtension);
+            /*
             if (File.Exists(_outputLocationPath + recording.GetFileName() + _videoExtension))
             {
                 File.Delete(_outputLocationPath + recording.GetFileName() + _videoExtension);
             }
+            */
         }
     }
 }
