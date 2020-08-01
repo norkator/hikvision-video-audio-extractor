@@ -66,3 +66,5 @@ VideoAudioExtractor/obj/Release/netcoreapp3.1/VideoAudioExtractor.csproj.CoreCom
 VideoAudioExtractor/obj/Release/netcoreapp3.1/VideoAudioExtractor.csproj.FileListAbsolute.txt
 VideoAudioExtractor/obj/Release/netcoreapp3.1/VideoAudioExtractor.csprojAssemblyReference.cache
 VideoAudioExtractor/obj/Release/netcoreapp3.1/VideoAudioExtractor.genruntimeconfig.cache
+VideoAudioExtractor/bin/Release/bin/LocalXml.zip
+VideoAudioExtractor/bin/Release/bin/log4cxx.properties
