@@ -1,23 +1,22 @@
 ﻿using System;
-using System.Globalization;
 using System.Threading;
-using FFMpegCore;
 
 namespace VideoAudioExtractor
 {
     static class Program
     {
         // Todo: fix this to look application installation path
-        private static readonly string configFile =
-            "C:\\Users\\Martin\\Documents\\RiderProjects\\hikvision-video-audio-extractor\\config.xml";
+        private static readonly string ConfigFile = System.AppDomain.CurrentDomain.BaseDirectory + "config.xml";
 
-        private static readonly ConfigReader ConfigReader = new ConfigReader(configFile);
+        private static readonly ConfigReader ConfigReader = new ConfigReader(ConfigFile);
         private static NvrConnector _nvrConnector = null;
 
         static void Main(string[] args)
         {
             
+            Console.WriteLine(ConfigReader.GetIpAddress);
             
+            /*
             // This will initiate login to nvr
             _nvrConnector = new NvrConnector(
                 ConfigReader.GetIpAddress,
@@ -30,8 +29,8 @@ namespace VideoAudioExtractor
                 ConfigReader.GetBoolDeleteVideos,
                 ConfigReader.GetCameraName
             );
-            
-            
+            */
+
             //Thread.Sleep(5 * 1000);
             //_nvrConnector.LogOutNvr();
 

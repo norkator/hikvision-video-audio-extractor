@@ -35,7 +35,10 @@ Development
 3. Unzip ffmpeg anywhere you like. Example `C:\ffmpeg`
 4. Open system environmental variable aditor and add `C:\ffmpeg\bin` to your `System variables` -> `Path` 
 but with your unzip location including `\bin` since ffmpeg executable is under that folder.
-5. For me only after system restart ffmpeg started to work.
+5. For me only after system restart ffmpeg started to work
+6. Create config.xml: `...\VideoAudioExtractor\bin\Debug\netcoreapp3.1\config.xml` 
+and use config.xml section example filled with your details.
+7. Run application.
 
 
 Production
