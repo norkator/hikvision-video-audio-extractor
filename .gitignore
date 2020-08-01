@@ -53,3 +53,16 @@ VideoAudioExtractor/obj/Debug/netcoreapp3.1/VideoAudioExtractor.assets.cache
 VideoAudioExtractor/obj/VideoAudioExtractor.csproj.nuget.cache
 VideoAudioExtractor/obj/Debug/netcoreapp3.1/VideoAudioExtractor.AssemblyInfoInputs.cache
 VideoAudioExtractor/obj/Debug/netcoreapp3.1/VideoAudioExtractor.genruntimeconfig.cache
+
+VideoAudioExtractor/bin/Release/netcoreapp3.1/VideoAudioExtractor.deps.json
+VideoAudioExtractor/bin/Release/netcoreapp3.1/VideoAudioExtractor.runtimeconfig.dev.json
+VideoAudioExtractor/bin/Release/netcoreapp3.1/VideoAudioExtractor.runtimeconfig.json
+VideoAudioExtractor/obj/Release/netcoreapp3.1/.NETCoreApp,Version=v3.1.AssemblyAttributes.cs
+VideoAudioExtractor/obj/Release/netcoreapp3.1/VideoAudioExtractor.AssemblyInfo.cs
+VideoAudioExtractor/obj/Release/netcoreapp3.1/VideoAudioExtractor.AssemblyInfoInputs.cache
+VideoAudioExtractor/obj/Release/netcoreapp3.1/VideoAudioExtractor.assets.cache
+VideoAudioExtractor/obj/Release/netcoreapp3.1/VideoAudioExtractor.csproj.CopyComplete
+VideoAudioExtractor/obj/Release/netcoreapp3.1/VideoAudioExtractor.csproj.CoreCompileInputs.cache
+VideoAudioExtractor/obj/Release/netcoreapp3.1/VideoAudioExtractor.csproj.FileListAbsolute.txt
+VideoAudioExtractor/obj/Release/netcoreapp3.1/VideoAudioExtractor.csprojAssemblyReference.cache
+VideoAudioExtractor/obj/Release/netcoreapp3.1/VideoAudioExtractor.genruntimeconfig.cache
