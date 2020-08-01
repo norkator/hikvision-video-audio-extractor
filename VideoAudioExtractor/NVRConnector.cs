@@ -72,9 +72,6 @@ namespace VideoAudioExtractor
                 CHCNetSDK.NET_DVR_SetLogToFile(3, "C:\\SdkLog\\", true);
                 _iChannelNum = new int[96];
             }
-
-
-            Task.Run(this.OpenDatabaseConnection).Wait(); // Todo, remove from here, move to program main process
         }
 
 
@@ -82,7 +79,7 @@ namespace VideoAudioExtractor
          * Open database connection,
          * if fails, will try again after 60 seconds
          */
-        private async Task OpenDatabaseConnection()
+        public async Task OpenDatabaseConnection()
         {
             bool dbConnected = await _database.OpenDatabaseConnection();
             if (dbConnected)
@@ -112,10 +109,6 @@ namespace VideoAudioExtractor
 
                     // Log out from nvr at this point
                     LogOutNvr();
-
-                    // Update database, set as downloaded
-                    Task<bool> updateDatabaseTask = UpdateDatabase(downloadedRecordings);
-                    await updateDatabaseTask;
                 }
                 else
                 {
@@ -160,7 +153,7 @@ namespace VideoAudioExtractor
 
                     if (_dwDChanTotalNum > 0)
                     {
-                        // InfoIPChannel(); TODO: Implement later
+                        // InfoIPChannel(); TODO: Implement later if needed
                     }
                     else
                     {
@@ -230,7 +223,6 @@ namespace VideoAudioExtractor
 
             CHCNetSDK.NET_DVR_FILECOND_V40 struFileCondV40 = new CHCNetSDK.NET_DVR_FILECOND_V40();
 
-            // TODO: nothing yet selects iSelIndex, or is 0 "first one"?
             struFileCondV40.lChannel = _iChannelNum[(int) iSelIndex]; //Channel number
             struFileCondV40.dwFileType = 0xff; //0xff-All，0-Timing record，1-Motion detection，2-Alarm trigger，...
             struFileCondV40.dwIsLocked =
@@ -341,12 +333,14 @@ namespace VideoAudioExtractor
                 if (await DownloadRecording(recording))
                 {
                     downloadedRecordings.Add(recording);
-                    await ExtractAudio(recording);
+                    bool result = await ExtractAudio(recording); // Todo, log failed extraction
                     if (_deleteVideos)
                     {
                         DeleteVideoFile(recording);
-                        // TODO: insert database row here, not at one batch, too dangerous if fails with one video.
                     }
+
+                    // Update database, set as downloaded
+                    await UpdateDatabase(recording);
                 }
             }
 
@@ -404,11 +398,10 @@ namespace VideoAudioExtractor
 
         private async Task<bool> ExtractAudio(Recording recording)
         {
-            Console.WriteLine("Video input path: " + _outputLocationPath + recording.GetFileName() + _videoExtension);
-            Console.WriteLine("Audio export path: " + _audioExportPath + recording.GetFileName() + _audioExtension);
-            
             try
             {
+                Console.WriteLine("Video input path: " + _outputLocationPath + recording.GetFileName() + _videoExtension);
+                Console.WriteLine("Audio export path: " + _audioExportPath + recording.GetFileName() + _audioExtension);
                 return FFMpeg.ExtractAudio(
                     _outputLocationPath + recording.GetFileName() + _videoExtension,
                     _audioExportPath + recording.GetFileName() + _audioExtension);
@@ -418,23 +411,18 @@ namespace VideoAudioExtractor
                 Console.WriteLine(e);
             }
 
-            return true;
+            return false;
         }
 
 
-        private async Task<bool> UpdateDatabase(List<Recording> downloadedRecordings)
+        private async Task<bool> UpdateDatabase(Recording recording)
         {
-            foreach (var recording in downloadedRecordings)
-            {
-                await _database.InsertRecording(recording);
-            }
-
+            await _database.InsertRecording(recording);
             return true;
         }
 
         private void DeleteVideoFile(Recording recording)
         {
-            // Console.WriteLine("Deleting " + _outputLocationPath + recording.GetFileName() + _videoExtension);
             if (File.Exists(_outputLocationPath + recording.GetFileName() + _videoExtension))
             {
                 File.Delete(_outputLocationPath + recording.GetFileName() + _videoExtension);

@@ -10,7 +10,7 @@ namespace NVRCsharpDemo
         public CHCNetSDK()
         {
             //
-            // TODO: 在此处添加构造函数逻辑
+            // 在此处添加构造函数逻辑
             //
         }
         
