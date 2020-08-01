@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using FFMpegCore;
@@ -344,6 +345,7 @@ namespace VideoAudioExtractor
                     if (_deleteVideos)
                     {
                         DeleteVideoFile(recording);
+                        // TODO: insert database row here, not at one batch, too dangerous if fails with one video.
                     }
                 }
             }
@@ -404,9 +406,19 @@ namespace VideoAudioExtractor
         {
             Console.WriteLine("Video input path: " + _outputLocationPath + recording.GetFileName() + _videoExtension);
             Console.WriteLine("Audio export path: " + _audioExportPath + recording.GetFileName() + _audioExtension);
-            return FFMpeg.ExtractAudio(
-                _outputLocationPath + recording.GetFileName() + _videoExtension,
-                _audioExportPath + recording.GetFileName() + _audioExtension);
+            
+            try
+            {
+                return FFMpeg.ExtractAudio(
+                    _outputLocationPath + recording.GetFileName() + _videoExtension,
+                    _audioExportPath + recording.GetFileName() + _audioExtension);
+            }
+            catch (TypeInitializationException e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return true;
         }
 
 
@@ -422,13 +434,11 @@ namespace VideoAudioExtractor
 
         private void DeleteVideoFile(Recording recording)
         {
-            Console.WriteLine("Deleting " + _outputLocationPath + recording.GetFileName() + _videoExtension);
-            /*
+            // Console.WriteLine("Deleting " + _outputLocationPath + recording.GetFileName() + _videoExtension);
             if (File.Exists(_outputLocationPath + recording.GetFileName() + _videoExtension))
             {
                 File.Delete(_outputLocationPath + recording.GetFileName() + _videoExtension);
             }
-            */
         }
     }
 }

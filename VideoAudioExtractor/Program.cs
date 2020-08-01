@@ -17,7 +17,7 @@ namespace VideoAudioExtractor
         static void Main(string[] args)
         {
             
-            /*
+            
             // This will initiate login to nvr
             _nvrConnector = new NvrConnector(
                 ConfigReader.GetIpAddress,
@@ -30,22 +30,10 @@ namespace VideoAudioExtractor
                 ConfigReader.GetBoolDeleteVideos,
                 ConfigReader.GetCameraName
             );
-            */
+            
             
             //Thread.Sleep(5 * 1000);
             //_nvrConnector.LogOutNvr();
-
-
-            try
-            {
-                FFMpeg.ExtractAudio(
-                    "C:\\Users\\Martin\\Desktop\\output\\ch01_00000000086006201.mp4",
-                    "C:\\Users\\Martin\\Desktop\\output\\ch01_00000000086006201.mp3");
-            }
-            catch (TypeInitializationException e)
-            {
-                Console.WriteLine(e);
-            }
 
 
             /*
