@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using FFMpegCore;
+using Npgsql;
 using NVRCsharpDemo;
 
 namespace VideoAudioExtractor
@@ -84,7 +86,19 @@ namespace VideoAudioExtractor
             bool dbConnected = await _database.OpenDatabaseConnection();
             if (dbConnected)
             {
-                await StartProcess();
+                try
+                {
+                    await StartProcess();
+                }
+                catch (System.AggregateException e)
+                {
+                    Console.WriteLine(e);
+                    Console.WriteLine("Npgsql connection lost? try again on next run...");
+                }
+                catch (NpgsqlException e)
+                {
+                    Console.WriteLine(e);
+                }
             }
         }
 
