@@ -89,6 +89,29 @@ Sample config.xml file and options described.
 `cameraName` => Camera name, meant to be same as Open-Intelligence config.ini specified camera name.
 
 
+Database table
+======
+
+If you run it without Open Intelligence then you need one table on your PostgreSQL database.
+```sql
+create table recordings
+(
+	id bigserial not null
+		constraint recordings_pkey
+			primary key,
+	camera_name varchar(255),
+	file_name varchar(255),
+	start_time timestamp with time zone,
+	end_time timestamp with time zone,
+	"createdAt" timestamp with time zone default now(),
+	"updatedAt" timestamp with time zone default now()
+);
+
+alter table recordings owner to postgres;
+```
+Insert one line into database having some `end_time` so process uses it as base for recording lookup.
+
+
 License
 ============
 See LICENSE file.
