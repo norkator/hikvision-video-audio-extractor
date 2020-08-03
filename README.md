@@ -31,11 +31,11 @@ Development
 ------
 
 1. Contents of `HCNetSDK.zip` are unzipped under `VideoAudioExtractor\bin\Debug\bin`
-2. Download ffmpeg windows builds: [https://ffmpeg.zeranoe.com/builds/](https://ffmpeg.zeranoe.com/builds/)
+2. Download ffmpeg windows build: [https://ffmpeg.zeranoe.com/builds/](https://ffmpeg.zeranoe.com/builds/)
 3. Unzip ffmpeg anywhere you like. Example `C:\ffmpeg`
-4. Open system environmental variable aditor and add `C:\ffmpeg\bin` to your `System variables` -> `Path` 
+4. Open system environmental variable editor and add `C:\ffmpeg\bin` to your `System variables` -> `Path` 
 but with your unzip location including `\bin` since ffmpeg executable is under that folder.
-5. For me only after system restart ffmpeg started to work
+5. For me only after system restart ffmpeg started to work. Try with shell `ffmpeg` if runs without errors.
 6. Create config.xml: `...\VideoAudioExtractor\bin\Debug\netcoreapp3.1\config.xml` 
 and use config.xml section example filled with your details.
 7. Run application.
@@ -44,8 +44,15 @@ and use config.xml section example filled with your details.
 Production
 ------ 
 
-No instructions since no releases yet.
-
+1. Download latest release from releases section `HikvisionVideoAudioExtractor_...zip`
+2. Unzip it anywhere you want.
+3. Configure `config.xml` under `/HikvisionVideoAudioExtractor/netcoreapp3.1/` folder.
+4. Download ffmpeg windows build: [https://ffmpeg.zeranoe.com/builds/](https://ffmpeg.zeranoe.com/builds/)
+5. Unzip ffmpeg anywhere you like. Example `C:\ffmpeg`
+6. Open system environmental variable editor and add `C:\ffmpeg\bin` to your `System variables` -> `Path` 
+but with your unzip location including `\bin` since ffmpeg executable is under that folder.
+7. For me only after system restart ffmpeg started to work. Try with shell `ffmpeg` if runs without errors.
+8. Start using extractor via running `VideoAudioExtractor.exe`
 
 config.xml
 ======
