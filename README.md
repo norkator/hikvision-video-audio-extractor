@@ -18,6 +18,7 @@ Table of contents
     * [Development](#development)
     * [Production](#production)
 * [Config.xml](#configxml)
+* [Database table](#database-table)
 * [License](#license)
 
 
