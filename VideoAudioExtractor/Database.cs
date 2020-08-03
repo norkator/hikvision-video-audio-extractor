@@ -27,6 +27,10 @@ namespace VideoAudioExtractor
             return (_connection.State & ConnectionState.Open) != 0;
         }
 
+        public bool Connected()
+        {
+            return (_connection.State & ConnectionState.Open) != 0;
+        }
 
         public async Task InsertRecording(Recording recording)
         {
