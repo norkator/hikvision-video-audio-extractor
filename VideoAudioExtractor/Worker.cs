@@ -35,7 +35,7 @@ namespace VideoAudioExtractor
             while (KeepGoing)
             {
                 // Run process
-                Task.Run(_nvrConnector.OpenDatabaseConnection).Wait();
+                Task.Run(_nvrConnector.StartProcess).Wait();
                 // Sleep before next run
                 Thread.Sleep(_processSleepSeconds * 1000);
             }

@@ -29,6 +29,11 @@ namespace VideoAudioExtractor
 
         public bool Connected()
         {
+            if (_connection == null)
+            {
+                return false;
+            }
+
             return (_connection.State & ConnectionState.Open) != 0;
         }
 

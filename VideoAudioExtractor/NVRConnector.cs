@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Globalization;
 using System.IO;
 using System.Threading;
@@ -81,29 +80,31 @@ namespace VideoAudioExtractor
          * Open database connection,
          * if fails, will try again after 60 seconds
          */
-        public async Task OpenDatabaseConnection()
+        public async Task StartProcess()
         {
-            bool dbConnected = await _database.OpenDatabaseConnection();
-            if (dbConnected)
+            if (!_database.Connected())
             {
-                try
-                {
-                    await StartProcess();
-                }
-                catch (System.AggregateException e)
-                {
-                    Console.WriteLine(e);
-                    Console.WriteLine("Npgsql connection lost? try again on next run...");
-                }
-                catch (NpgsqlException e)
-                {
-                    Console.WriteLine(e);
-                }
+                await _database.OpenDatabaseConnection();
+                Console.WriteLine("Was not connected to database, connected now...");
+            }
+            try
+            {
+                Console.WriteLine("Starting processor...");
+                await Processor();
+            }
+            catch (System.AggregateException e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine("Npgsql connection lost? try again on next run...");
+            }
+            catch (NpgsqlException e)
+            {
+                Console.WriteLine(e);
             }
         }
 
 
-        private async Task StartProcess()
+        private async Task Processor()
         {
             // Get latest recording end time we have
             var lastRecordingEndTime = GetLastRecordingEndTime();
@@ -414,7 +415,8 @@ namespace VideoAudioExtractor
         {
             try
             {
-                Console.WriteLine("Video input path: " + _outputLocationPath + recording.GetFileName() + _videoExtension);
+                Console.WriteLine(
+                    "Video input path: " + _outputLocationPath + recording.GetFileName() + _videoExtension);
                 Console.WriteLine("Audio export path: " + _audioExportPath + recording.GetFileName() + _audioExtension);
                 return FFMpeg.ExtractAudio(
                     _outputLocationPath + recording.GetFileName() + _videoExtension,
