@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FFMpegCore;
 using Npgsql;
 using NVRCsharpDemo;
+using RunProcessAsTask;
 
 namespace VideoAudioExtractor
 {
@@ -359,10 +360,15 @@ namespace VideoAudioExtractor
                 if (await DownloadRecording(recording))
                 {
                     downloadedRecordings.Add(recording);
-                    bool result = await ExtractAudio(recording); // Todo, log failed extraction
+                    bool result = await ExtractAudio(recording);
+                    if (result && _audioSilenceRemove)
+                    {
+                        await AudioSilenceRemove(recording);
+                    }
+
                     if (_deleteVideos)
                     {
-                        DeleteVideoFile(recording);
+                        DeleteFile(_outputLocationPath + recording.GetFileName() + _videoExtension);
                     }
                 }
 
@@ -433,12 +439,14 @@ namespace VideoAudioExtractor
         {
             try
             {
-                Console.WriteLine(
-                    "Video input path: " + _outputLocationPath + recording.GetFileName() + _videoExtension);
-                Console.WriteLine("Audio export path: " + _audioExportPath + recording.GetFileName() + _audioExtension);
-                return FFMpeg.ExtractAudio(
-                    _outputLocationPath + recording.GetFileName() + _videoExtension,
-                    _audioExportPath + recording.GetFileName() + _audioExtension);
+                // Console.WriteLine("Video input path: " + _outputLocationPath + recording.GetFileName() + _videoExtension);
+                // Console.WriteLine("Audio export path: " + _audioExportPath + recording.GetFileName() + _audioExtension);
+
+                string audioOutput = _audioExportPath + recording.GetFileName() +
+                                     (_audioSilenceRemove ? "_temp" : "") + _audioExtension;
+
+                return FFMpeg.ExtractAudio(_outputLocationPath + recording.GetFileName() + _videoExtension,
+                    audioOutput);
             }
             catch (TypeInitializationException e)
             {
@@ -449,23 +457,33 @@ namespace VideoAudioExtractor
         }
 
 
-        private bool AudioSilenceRemove(Recording recording, String dBThreshold = "-40dB")
+        private async Task<bool> AudioSilenceRemove(Recording recording, String dBThreshold = "-40dB")
         {
+            Console.WriteLine("Remove audio silence with " + dBThreshold + " from " + recording.GetFileName());
             try
             {
-                string audioFile = _audioExportPath + recording.GetFileName() + _audioExtension;
+                string audioFileIn = _audioExportPath + recording.GetFileName() + "_temp" + _audioExtension;
+                string audioFileOut = _audioExportPath + recording.GetFileName() + _audioExtension;
 
                 string strCmdText =
-                    "ffmpeg -y -i " + audioFile + " -af silenceremove=stop_periods=-1:stop_duration=1:stop_threshold=" +
-                    dBThreshold + " " + audioFile;
-                System.Diagnostics.Process.Start("CMD.exe", strCmdText);
+                    "/c start ffmpeg -y -i " + audioFileIn +
+                    " -af silenceremove=stop_periods=-1:stop_duration=1:stop_threshold=" +
+                    dBThreshold + " " + audioFileOut;
+                
+                // System.Diagnostics.Process.Start("CMD.exe", strCmdText);
+                Task<ProcessResults> processResults = ProcessEx.RunAsync("CMD.exe", strCmdText);
+                await processResults;
+                DeleteFile(audioFileIn);
+                
+                return true;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                return false;
             }
         }
-
+        
 
         private async Task<bool> UpdateDatabase(Recording recording)
         {
@@ -473,11 +491,11 @@ namespace VideoAudioExtractor
             return true;
         }
 
-        private void DeleteVideoFile(Recording recording)
+        private void DeleteFile(String filePath)
         {
-            if (File.Exists(_outputLocationPath + recording.GetFileName() + _videoExtension))
+            if (File.Exists(filePath))
             {
-                File.Delete(_outputLocationPath + recording.GetFileName() + _videoExtension);
+                File.Delete(filePath);
             }
         }
     }

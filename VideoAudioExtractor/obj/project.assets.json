@@ -251,6 +251,15 @@
           "lib/netcoreapp3.0/Npgsql.dll": {}
         }
       },
+      "RunProcessAsTask/1.2.4": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/RunProcessAsTask.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/RunProcessAsTask.dll": {}
+        }
+      },
       "System.Drawing.Common/4.7.0": {
         "type": "package",
         "dependencies": {
@@ -459,6 +468,20 @@
         "postgresql.png"
       ]
     },
+    "RunProcessAsTask/1.2.4": {
+      "sha512": "ndU9F3ohMQpCe34cen8LvtVY2xCUWF++jEJworvq6IuazF9FQUwnuT/8we6wbgOdHC20aHCduGnjuA5D0azbAQ==",
+      "type": "package",
+      "path": "runprocessastask/1.2.4",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/RunProcessAsTask.dll",
+        "lib/netstandard1.4/RunProcessAsTask.dll",
+        "lib/netstandard2.0/RunProcessAsTask.dll",
+        "runprocessastask.1.2.4.nupkg.sha512",
+        "runprocessastask.nuspec"
+      ]
+    },
     "System.Drawing.Common/4.7.0": {
       "sha512": "v+XbyYHaZjDfn0ENmJEV1VYLgGgCTx1gnfOBcppowbpOAriglYgGCvFCPr2EEZyBvXlpxbEsTwkOlInl107ahA==",
       "type": "package",
@@ -549,7 +572,8 @@
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v3.1": [
       "FFMpegCore >= 2.2.4",
-      "Npgsql >= 4.1.4"
+      "Npgsql >= 4.1.4",
+      "RunProcessAsTask >= 1.2.4"
     ]
   },
   "packageFolders": {
@@ -594,6 +618,10 @@
           "Npgsql": {
             "target": "Package",
             "version": "[4.1.4, )"
+          },
+          "RunProcessAsTask": {
+            "target": "Package",
+            "version": "[1.2.4, )"
           }
         },
         "imports": [
