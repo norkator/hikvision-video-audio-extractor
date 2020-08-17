@@ -30,6 +30,7 @@ namespace VideoAudioExtractor
         private readonly string _outputLocationPath;
         private readonly string _audioExportPath;
         private readonly bool _deleteVideos;
+        private readonly bool _audioSilenceRemove;
 
         // Camera variables
         private Int32 _i = 0;
@@ -48,7 +49,7 @@ namespace VideoAudioExtractor
         // Constructor
         public NvrConnector(string ipAddress, int port, string username, string password,
             string dbConnString, string outputLocationPath, string audioExportPath, bool deleteVideos,
-            string cameraName)
+            string cameraName, bool audioSilenceRemove)
         {
             _ipAddress = ipAddress;
             _port = (Int16) port;
@@ -60,6 +61,7 @@ namespace VideoAudioExtractor
             _outputLocationPath = outputLocationPath;
             _audioExportPath = audioExportPath;
             _deleteVideos = deleteVideos;
+            _audioSilenceRemove = audioSilenceRemove;
 
             var mBInitSdk = CHCNetSDK.NET_DVR_Init();
             if (mBInitSdk == false)
@@ -87,6 +89,7 @@ namespace VideoAudioExtractor
                 await _database.OpenDatabaseConnection();
                 Console.WriteLine("Was not connected to database, connected now...");
             }
+
             try
             {
                 Console.WriteLine("Starting processor...");
@@ -362,7 +365,7 @@ namespace VideoAudioExtractor
                         DeleteVideoFile(recording);
                     }
                 }
-                
+
                 // Update database, set as downloaded, no matter is it downloaded successfully or not
                 await UpdateDatabase(recording);
             }
@@ -395,6 +398,7 @@ namespace VideoAudioExtractor
                 {
                     System.IO.Directory.CreateDirectory(_outputLocationPath);
                 }
+
                 return false;
             }
 
@@ -442,6 +446,24 @@ namespace VideoAudioExtractor
             }
 
             return false;
+        }
+
+
+        private bool AudioSilenceRemove(Recording recording, String dBThreshold = "-40dB")
+        {
+            try
+            {
+                string audioFile = _audioExportPath + recording.GetFileName() + _audioExtension;
+
+                string strCmdText =
+                    "ffmpeg -y -i " + audioFile + " -af silenceremove=stop_periods=-1:stop_duration=1:stop_threshold=" +
+                    dBThreshold + " " + audioFile;
+                System.Diagnostics.Process.Start("CMD.exe", strCmdText);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
 

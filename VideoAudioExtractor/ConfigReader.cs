@@ -18,7 +18,7 @@ namespace VideoAudioExtractor
         private string _dbConnectionString = string.Empty;
         private string _outputLocationPath = string.Empty;
         private bool _deleteVideos = false;
-        private bool _extractVoiceOnly = false;
+        private bool _audioSilenceRemove = false;
         private string _audioExportPath = string.Empty;
         private string _cameraName = string.Empty;
 
@@ -43,7 +43,7 @@ namespace VideoAudioExtractor
             _dbConnectionString = _config.SelectSingleNode(_configBase + "dbConnectionString").InnerText;
             _outputLocationPath = _config.SelectSingleNode(_configBase + "outputLocationPath").InnerText;
             _deleteVideos = _config.SelectSingleNode(_configBase + "deleteVideos").InnerText == "true";
-            _extractVoiceOnly = _config.SelectSingleNode(_configBase + "extractVoiceOnly").InnerText == "true";
+            _audioSilenceRemove = _config.SelectSingleNode(_configBase + "audioSilenceRemove").InnerText == "true";
             _audioExportPath = _config.SelectSingleNode(_configBase + "audioExportPath").InnerText;
             _cameraName = _config.SelectSingleNode(_configBase + "cameraName").InnerText;
         }
@@ -59,6 +59,6 @@ namespace VideoAudioExtractor
         public string GetAudioExportPath => _audioExportPath;
         public string GetCameraName => _cameraName;
 
-        public bool GetExtractVoiceOnly => _extractVoiceOnly;
+        public bool GetAudioSilenceRemove => _audioSilenceRemove;
     }
 }

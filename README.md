@@ -72,7 +72,7 @@ Sample config.xml file and options described.
         <dbConnectionString>Host=localhost;Username=username;Password=password;Database=intelligence</dbConnectionString>
         <outputLocationPath>C:\Users\SomeUser\Example\Path\</outputLocationPath>
         <deleteVideos>true</deleteVideos>
-        <extractVoiceOnly>true</extractVoiceOnly>
+        <audioSilenceRemove>true</audioSilenceRemove>
         <audioExportPath>C:\Users\SomeUser\Example\Path\</audioExportPath>
         <cameraName>CameraName</cameraName>
     </appSettings>
@@ -87,7 +87,7 @@ Sample config.xml file and options described.
 `dbConnectionString` => Open Intelligence postgresql database connection details.  
 `outputLocationPath` => Output path for videos downloaded.  
 `deleteVideos` => Process main task is to extract audio from video but also video can kept.
-`extractVoiceOnly` => This enabled looks only for voice containing recordings and extracts them. 
+`audioSilenceRemove` => Enabled will use ffmpeg from cmd to reduce/remove silence. 
 `audioExportPath` => Open intelligence output/audio folder or any other if used with some other purpose.   
 `cameraName` => Camera name, meant to be same as Open-Intelligence config.ini specified camera name.
 
