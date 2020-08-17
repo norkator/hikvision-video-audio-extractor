@@ -110,24 +110,32 @@ namespace VideoAudioExtractor
             var lastRecordingEndTime = GetLastRecordingEndTime();
             if (LoginLogoutNvr())
             {
-                // Find recordings from camera
-                Task<List<Recording>> searchRecordingsTask = SearchRecordings(lastRecordingEndTime);
-                await searchRecordingsTask;
-                List<Recording> recordings = searchRecordingsTask.Result;
-
-                if (recordings.Count > 0)
+                try
                 {
-                    // Download recordings which we don't have
-                    Task<List<Recording>> downloadedRecordingsTask = DownloadRecordings(recordings);
-                    await downloadedRecordingsTask;
-                    List<Recording> downloadedRecordings = downloadedRecordingsTask.Result;
+                    // Find recordings from camera
+                    Task<List<Recording>> searchRecordingsTask = SearchRecordings(lastRecordingEndTime);
+                    await searchRecordingsTask;
+                    List<Recording> recordings = searchRecordingsTask.Result;
 
-                    // Log out from nvr at this point
-                    LogOutNvr();
+                    if (recordings.Count > 0)
+                    {
+                        // Download recordings which we don't have
+                        Task<List<Recording>> downloadedRecordingsTask = DownloadRecordings(recordings);
+                        await downloadedRecordingsTask;
+                        List<Recording> downloadedRecordings = downloadedRecordingsTask.Result;
+
+                        // Log out from nvr at this point
+                        LogOutNvr();
+                    }
+                    else
+                    {
+                        Console.WriteLine("No recordings to download...");
+                        LogOutNvr();
+                    }
                 }
-                else
+                catch (System.AggregateException exception)
                 {
-                    Console.WriteLine("No recordings to download...");
+                    Console.WriteLine(exception.Message);
                     LogOutNvr();
                 }
             }
