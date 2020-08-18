@@ -26,7 +26,9 @@ namespace VideoAudioExtractor
                 configReader1.GetOutputLocationPath,
                 configReader1.GetAudioExportPath,
                 configReader1.GetBoolDeleteVideos,
-                configReader1.GetCameraName
+                configReader1.GetCameraName,
+                configReader1.GetAudioSilenceRemove,
+                configReader1.GetAudiodBThreshold
             );
         }
 

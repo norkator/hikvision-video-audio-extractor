@@ -43,6 +43,10 @@
             "Npgsql": {
               "target": "Package",
               "version": "[4.1.4, )"
+            },
+            "RunProcessAsTask": {
+              "target": "Package",
+              "version": "[1.2.4, )"
             }
           },
           "imports": [

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FFMpegCore;
 using Npgsql;
 using NVRCsharpDemo;
+using RunProcessAsTask;
 
 namespace VideoAudioExtractor
 {
@@ -30,6 +31,8 @@ namespace VideoAudioExtractor
         private readonly string _outputLocationPath;
         private readonly string _audioExportPath;
         private readonly bool _deleteVideos;
+        private readonly bool _audioSilenceRemove;
+        private readonly string _audiodBThreshold;
 
         // Camera variables
         private Int32 _i = 0;
@@ -48,7 +51,7 @@ namespace VideoAudioExtractor
         // Constructor
         public NvrConnector(string ipAddress, int port, string username, string password,
             string dbConnString, string outputLocationPath, string audioExportPath, bool deleteVideos,
-            string cameraName)
+            string cameraName, bool audioSilenceRemove, string audiodBThreshold)
         {
             _ipAddress = ipAddress;
             _port = (Int16) port;
@@ -60,6 +63,8 @@ namespace VideoAudioExtractor
             _outputLocationPath = outputLocationPath;
             _audioExportPath = audioExportPath;
             _deleteVideos = deleteVideos;
+            _audioSilenceRemove = audioSilenceRemove;
+            _audiodBThreshold = audiodBThreshold;
 
             var mBInitSdk = CHCNetSDK.NET_DVR_Init();
             if (mBInitSdk == false)
@@ -87,6 +92,7 @@ namespace VideoAudioExtractor
                 await _database.OpenDatabaseConnection();
                 Console.WriteLine("Was not connected to database, connected now...");
             }
+
             try
             {
                 Console.WriteLine("Starting processor...");
@@ -356,13 +362,18 @@ namespace VideoAudioExtractor
                 if (await DownloadRecording(recording))
                 {
                     downloadedRecordings.Add(recording);
-                    bool result = await ExtractAudio(recording); // Todo, log failed extraction
+                    bool result = await ExtractAudio(recording);
+                    if (result && _audioSilenceRemove)
+                    {
+                        await AudioSilenceRemove(recording, _audiodBThreshold);
+                    }
+
                     if (_deleteVideos)
                     {
-                        DeleteVideoFile(recording);
+                        DeleteFile(_outputLocationPath + recording.GetFileName() + _videoExtension);
                     }
                 }
-                
+
                 // Update database, set as downloaded, no matter is it downloaded successfully or not
                 await UpdateDatabase(recording);
             }
@@ -395,6 +406,7 @@ namespace VideoAudioExtractor
                 {
                     System.IO.Directory.CreateDirectory(_outputLocationPath);
                 }
+
                 return false;
             }
 
@@ -429,12 +441,14 @@ namespace VideoAudioExtractor
         {
             try
             {
-                Console.WriteLine(
-                    "Video input path: " + _outputLocationPath + recording.GetFileName() + _videoExtension);
-                Console.WriteLine("Audio export path: " + _audioExportPath + recording.GetFileName() + _audioExtension);
-                return FFMpeg.ExtractAudio(
-                    _outputLocationPath + recording.GetFileName() + _videoExtension,
-                    _audioExportPath + recording.GetFileName() + _audioExtension);
+                // Console.WriteLine("Video input path: " + _outputLocationPath + recording.GetFileName() + _videoExtension);
+                // Console.WriteLine("Audio export path: " + _audioExportPath + recording.GetFileName() + _audioExtension);
+
+                string audioOutput = _audioExportPath + recording.GetFileName() +
+                                     (_audioSilenceRemove ? "_temp" : "") + _audioExtension;
+
+                return FFMpeg.ExtractAudio(_outputLocationPath + recording.GetFileName() + _videoExtension,
+                    audioOutput);
             }
             catch (TypeInitializationException e)
             {
@@ -445,17 +459,45 @@ namespace VideoAudioExtractor
         }
 
 
+        private async Task<bool> AudioSilenceRemove(Recording recording, String dBThreshold = "-40dB")
+        {
+            Console.WriteLine("Remove audio silence with " + dBThreshold + " from " + recording.GetFileName());
+            try
+            {
+                string audioFileIn = _audioExportPath + recording.GetFileName() + "_temp" + _audioExtension;
+                string audioFileOut = _audioExportPath + recording.GetFileName() + _audioExtension;
+
+                string strCmdText =
+                    "/c start ffmpeg -y -i " + audioFileIn +
+                    " -af silenceremove=stop_periods=-1:stop_duration=1:stop_threshold=" +
+                    dBThreshold + " " + audioFileOut;
+                
+                // System.Diagnostics.Process.Start("CMD.exe", strCmdText);
+                Task<ProcessResults> processResults = ProcessEx.RunAsync("CMD.exe", strCmdText);
+                await processResults;
+                DeleteFile(audioFileIn);
+                
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+        }
+        
+
         private async Task<bool> UpdateDatabase(Recording recording)
         {
             await _database.InsertRecording(recording);
             return true;
         }
 
-        private void DeleteVideoFile(Recording recording)
+        private void DeleteFile(String filePath)
         {
-            if (File.Exists(_outputLocationPath + recording.GetFileName() + _videoExtension))
+            if (File.Exists(filePath))
             {
-                File.Delete(_outputLocationPath + recording.GetFileName() + _videoExtension);
+                File.Delete(filePath);
             }
         }
     }
