@@ -110,24 +110,32 @@ namespace VideoAudioExtractor
             var lastRecordingEndTime = GetLastRecordingEndTime();
             if (LoginLogoutNvr())
             {
-                // Find recordings from camera
-                Task<List<Recording>> searchRecordingsTask = SearchRecordings(lastRecordingEndTime);
-                await searchRecordingsTask;
-                List<Recording> recordings = searchRecordingsTask.Result;
-
-                if (recordings.Count > 0)
+                try
                 {
-                    // Download recordings which we don't have
-                    Task<List<Recording>> downloadedRecordingsTask = DownloadRecordings(recordings);
-                    await downloadedRecordingsTask;
-                    List<Recording> downloadedRecordings = downloadedRecordingsTask.Result;
+                    // Find recordings from camera
+                    Task<List<Recording>> searchRecordingsTask = SearchRecordings(lastRecordingEndTime);
+                    await searchRecordingsTask;
+                    List<Recording> recordings = searchRecordingsTask.Result;
 
-                    // Log out from nvr at this point
-                    LogOutNvr();
+                    if (recordings.Count > 0)
+                    {
+                        // Download recordings which we don't have
+                        Task<List<Recording>> downloadedRecordingsTask = DownloadRecordings(recordings);
+                        await downloadedRecordingsTask;
+                        List<Recording> downloadedRecordings = downloadedRecordingsTask.Result;
+
+                        // Log out from nvr at this point
+                        LogOutNvr();
+                    }
+                    else
+                    {
+                        Console.WriteLine("No recordings to download...");
+                        LogOutNvr();
+                    }
                 }
-                else
+                catch (System.AggregateException exception)
                 {
-                    Console.WriteLine("No recordings to download...");
+                    Console.WriteLine(exception.Message);
                     LogOutNvr();
                 }
             }
@@ -353,10 +361,10 @@ namespace VideoAudioExtractor
                     {
                         DeleteVideoFile(recording);
                     }
-
-                    // Update database, set as downloaded
-                    await UpdateDatabase(recording);
                 }
+                
+                // Update database, set as downloaded, no matter is it downloaded successfully or not
+                await UpdateDatabase(recording);
             }
 
             return downloadedRecordings;
@@ -373,6 +381,8 @@ namespace VideoAudioExtractor
 
             var sVideoFileName = _outputLocationPath + recording.GetFileName() + _videoExtension;
 
+            Console.WriteLine("Downloading: " + recording.GetFileName());
+
             // Download from nvr/camera by file name
             _mLDownHandle = CHCNetSDK.NET_DVR_GetFileByName(_mLUserId, recording.GetFileName(),
                 sVideoFileName);
@@ -381,6 +391,10 @@ namespace VideoAudioExtractor
                 _iLastErr = CHCNetSDK.NET_DVR_GetLastError();
                 _errorMsg = "NET_DVR_GetFileByName failed, error code= " + _iLastErr;
                 Console.WriteLine(_errorMsg);
+                if (_iLastErr == 34) // Target folder does not exist, create it
+                {
+                    System.IO.Directory.CreateDirectory(_outputLocationPath);
+                }
                 return false;
             }
 
